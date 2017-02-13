@@ -1,5 +1,7 @@
 package com.example.oivheg.resturantbussermaster;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -11,143 +13,151 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 public class Server {
-	MainActivity activity;
-	private ServerSocket serverSocket;
-	String message = "";
-	static final int socketServerPORT = 8080;
+    MainActivity activity;
+    private ServerSocket serverSocket;
+    String message = "";
+    static final int socketServerPORT = 8080;
 
-	public Server(MainActivity activity) {
-		this.activity = activity;
-		Thread socketServerThread = new Thread(new SocketServerThread());
-		socketServerThread.start();
-	}
+    public Server(MainActivity activity) {
+        this.activity = activity;
+        Thread socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread.start();
+    }
 
-	public int getPort() {
-		return socketServerPORT;
-	}
+    public int getPort() {
+        return socketServerPORT;
+    }
 
-	public void onDestroy() {
-		if (serverSocket != null) {
-			try {
-				serverSocket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+    public void onDestroy() {
+        if (serverSocket != null) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
-	private class SocketServerThread extends Thread {
+    private class SocketServerThread extends Thread {
 
-		int count = 0;
+        int count = 0;
 
-		@Override
-		public void run() {
-			try {
-				serverSocket = new ServerSocket(socketServerPORT);
+        @Override
+        public void run() {
+            try {
+                serverSocket = new ServerSocket(socketServerPORT);
+                DataInputStream dataInputStream = null;
+                while (true) {
+                    Socket socket = serverSocket.accept();
+                    count++;
+                    DataInputStream os = new DataInputStream(socket.getInputStream());
 
-				while (true) {
-					Socket socket = serverSocket.accept();
-					count++;
-					message += "#" + count + " from "
-							+ socket.getInetAddress() + ":"
-							+ socket.getPort() + "\n";
+                        final String data = os.readUTF();
 
-					activity.runOnUiThread(new Runnable() {
+                        System.out.println("Data: " + data);
 
-						@Override
-						public void run() {
-							activity.msg.setText(message);
-						}
-					});
 
-					SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(
-							socket, count);
-					socketServerReplyThread.run();
+                    message += "#" + count + " from "
+                            + socket.getInetAddress() + ":"
+                            + socket.getPort() + "\n";
 
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+                    activity.runOnUiThread(new Runnable() {
 
-	}
+                        @Override
+                        public void run() {
+                            activity.msg.setText(message);
+                            activity.addUser(data);
+                        }
+                    });
 
-	private class SocketServerReplyThread extends Thread {
+                    SocketServerReplyThread socketServerReplyThread = new SocketServerReplyThread(
+                            socket, count);
+                    socketServerReplyThread.run();
 
-		private Socket hostThreadSocket;
-		int cnt;
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
-		SocketServerReplyThread(Socket socket, int c) {
-			hostThreadSocket = socket;
-			cnt = c;
-		}
+    }
 
-		@Override
-		public void run() {
-			OutputStream outputStream;
-			String msgReply = "Hello from Server, you are #" + cnt;
+    private class SocketServerReplyThread extends Thread {
 
-			try {
-				outputStream = hostThreadSocket.getOutputStream();
-				PrintStream printStream = new PrintStream(outputStream);
-				printStream.print(msgReply);
-				printStream.close();
+        private Socket hostThreadSocket;
+        int cnt;
 
-				message += "replayed: " + msgReply + "\n";
+        SocketServerReplyThread(Socket socket, int c) {
+            hostThreadSocket = socket;
+            cnt = c;
+        }
 
-				activity.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            OutputStream outputStream;
+            String msgReply = "Hello from Server, you are #" + cnt;
 
-					@Override
-					public void run() {
-						activity.msg.setText(message);
-					}
-				});
+            try {
+                outputStream = hostThreadSocket.getOutputStream();
+                PrintStream printStream = new PrintStream(outputStream);
+                printStream.print(msgReply);
+                printStream.close();
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				message += "Something wrong! " + e.toString() + "\n";
-			}
+                message += "replayed: " + msgReply + "\n";
 
-			activity.runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
 
-				@Override
-				public void run() {
-					activity.msg.setText(message);
-				}
-			});
-		}
+                    @Override
+                    public void run() {
+                        activity.msg.setText(message);
+                    }
+                });
 
-	}
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                message += "Something wrong! " + e.toString() + "\n";
+            }
 
-	public String getIpAddress() {
-		String ip = "";
-		try {
-			Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
-					.getNetworkInterfaces();
-			while (enumNetworkInterfaces.hasMoreElements()) {
-				NetworkInterface networkInterface = enumNetworkInterfaces
-						.nextElement();
-				Enumeration<InetAddress> enumInetAddress = networkInterface
-						.getInetAddresses();
-				while (enumInetAddress.hasMoreElements()) {
-					InetAddress inetAddress = enumInetAddress
-							.nextElement();
+            activity.runOnUiThread(new Runnable() {
 
-					if (inetAddress.isSiteLocalAddress()) {
-						ip += "Server running at : "
-								+ inetAddress.getHostAddress();
-					}
-				}
-			}
+                @Override
+                public void run() {
+                    activity.msg.setText(message);
+                }
+            });
+        }
 
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			ip += "Something Wrong! " + e.toString() + "\n";
-		}
-		return ip;
-	}
+    }
+
+    public String getIpAddress() {
+        String ip = "";
+        try {
+            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
+                    .getNetworkInterfaces();
+            while (enumNetworkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = enumNetworkInterfaces
+                        .nextElement();
+                Enumeration<InetAddress> enumInetAddress = networkInterface
+                        .getInetAddresses();
+                while (enumInetAddress.hasMoreElements()) {
+                    InetAddress inetAddress = enumInetAddress
+                            .nextElement();
+
+                    if (inetAddress.isSiteLocalAddress()) {
+                        ip += "Server running at : "
+                                + inetAddress.getHostAddress();
+                    }
+                }
+            }
+
+        } catch (SocketException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            ip += "Something Wrong! " + e.toString() + "\n";
+        }
+        return ip;
+    }
 }

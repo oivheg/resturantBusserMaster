@@ -10,16 +10,22 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
-    private static final int NUM_ROWS = 1;
+    private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
     Server server;
     TextView infoip, msg;
-    String activeUsers[] = {"øivind", "Espen", "Linda", "kåre"};
+    String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
+    List<String> activeUsers= new ArrayList();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         infoip = (TextView) findViewById(R.id.infoip);
@@ -27,18 +33,30 @@ public class MainActivity extends AppCompatActivity {
         server = new Server(this);
         infoip.setText(server.getIpAddress() + ":" + server.getPort());
 
-        findClients();
-        populateClients();
+
+//        findClients();
+//        populateClients();
     }
 
     private void findClients() {
-        for (int users = 0; users < activeUsers.length; users++) {
+//        NUM_COL = 0;
+        for (int users = 0; users < activeUsers.size(); users++) {
             NUM_COL++;
         }
     }
 
+    public void addUser(String name){
+        NUM_ROWS= 1;
+        NUM_COL = 0;
+        activeUsers.add("First");
+        activeUsers.add(name);
+        findClients();
+        populateClients();
+    }
+
     private void populateClients() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
+        table.removeAllViews();
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
@@ -52,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
             table.addView(tableRow);
             for (int col = 0; col < NUM_COL; col++) {
-                final String FINAL_USER_NAME = activeUsers[col];
+                final String FINAL_USER_NAME = activeUsers.get(col);
                 Button button = new Button(this);
 
 
