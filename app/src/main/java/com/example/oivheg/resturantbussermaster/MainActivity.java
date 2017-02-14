@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     TextView infoip, msg;
     String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     List<String> activeUsers= new ArrayList();
-
+    List<String> showUsers = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +40,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void findClients() {
 //        NUM_COL = 0;
+
+        // error here, that activates when there are more than 3 users,, then there are added an additional row.
         for (int users = 0; users < activeUsers.size(); users++) {
-            NUM_COL++;
+            if (users >= 3) {
+                if (users >= 5) {
+                    NUM_ROWS--;
+                }
+                NUM_ROWS++;
+            } else {
+                NUM_COL++;
+            }
+
+
         }
     }
 
     public void addUser(String name){
         NUM_ROWS= 1;
         NUM_COL = 0;
-        activeUsers.add("First");
+        UserCounter = 0;
         activeUsers.add(name);
         findClients();
         populateClients();
     }
 
+    int UserCounter = 0;
     private void populateClients() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
         table.removeAllViews();
@@ -65,14 +77,18 @@ public class MainActivity extends AppCompatActivity {
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.MATCH_PARENT,
                     1.0f
-
             ));
 
-            table.addView(tableRow);
-            for (int col = 0; col < NUM_COL; col++) {
-                final String FINAL_USER_NAME = activeUsers.get(col);
-                Button button = new Button(this);
 
+            table.addView(tableRow);
+
+            for (int col = 0; col < NUM_COL; col++) {
+                if (UserCounter >= activeUsers.size()) {
+                    break;
+                }
+                final String FINAL_USER_NAME = activeUsers.get(UserCounter);
+                Button button = new Button(this);
+                UserCounter++;
 
                 button.setLayoutParams(new TableRow.LayoutParams(
                         TableRow.LayoutParams.MATCH_PARENT,
