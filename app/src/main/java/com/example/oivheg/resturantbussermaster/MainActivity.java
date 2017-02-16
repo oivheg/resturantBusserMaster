@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     Server server;
     TextView infoip, msg;
     String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
-    List<String> activeUsers= new ArrayList();
+    List<String> activeUsers = new ArrayList();
     List<String> showUsers = new ArrayList();
 
     @Override
@@ -43,11 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
         // error here, that activates when there are more than 3 users,, then there are added an additional row.
         for (int users = 0; users < activeUsers.size(); users++) {
+
             if (users >= 3) {
-                if (users >= 5) {
-                    NUM_ROWS--;
+                double tmp = ((double) activeUsers.size() / 3);
+                if (tmp == 0) {
+                    tmp = 1;
                 }
-                NUM_ROWS++;
+                tmp = Math.ceil(tmp);
+                NUM_ROWS = (int) tmp;
+
             } else {
                 NUM_COL++;
             }
@@ -56,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addUser(String name){
-        NUM_ROWS= 1;
+    public void addUser(String name) {
+        NUM_ROWS = 1;
         NUM_COL = 0;
         UserCounter = 0;
         activeUsers.add(name);
@@ -66,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int UserCounter = 0;
+
     private void populateClients() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
         table.removeAllViews();
