@@ -105,12 +105,13 @@ public class Server {
                 printStream.print(msgReply);
                 printStream.close();
 
-                message += "replayed: " + msgReply + "\n";
+                message = "replayed: " + msgReply + "\n";
 
                 activity.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
+
                         activity.msg.setText(message);
                     }
                 });
@@ -125,6 +126,8 @@ public class Server {
 
                 @Override
                 public void run() {
+
+                   
                     activity.msg.setText(message);
                 }
             });
