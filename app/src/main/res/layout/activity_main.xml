@@ -41,23 +41,34 @@
             <Button
                 android:text="Call All users"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="99dp"
                 android:width="50dp"
                 android:height="50dp"
                 android:id="@+id/button"
-                android:layout_weight="1" />
+                android:layout_weight="0.66" />
 
         </LinearLayout>
 
-        <TableLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:stretchColumns="*"
-            android:id="@+id/tableForClients">
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:stretchColumns="*"
+                    android:id="@+id/tableForClients">
 
 
-        </TableLayout>
+                </TableLayout>
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

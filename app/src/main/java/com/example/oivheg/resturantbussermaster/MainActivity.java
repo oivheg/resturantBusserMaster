@@ -1,5 +1,8 @@
 package com.example.oivheg.resturantbussermaster;
 
+import android.app.ActionBar;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,20 +24,34 @@ public class MainActivity extends AppCompatActivity {
     String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     List<String> activeUsers = new ArrayList();
     List<String> showUsers = new ArrayList();
+    SharedPreferences prefs = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
         server = new Server(this);
         infoip.setText(server.getIpAddress() + ":" + server.getPort());
-
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        //HideStatusBar();
 
 //        findClients();
 //        populateClients();
+    }
+
+    private void HideStatusBar() {
+        View decorView = getWindow().getDecorView();
+// Hide the status bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+// Remember that you should never show the action bar if the
+// status bar is hidden, so hide that too if necessary.
+        ActionBar actionBar = getActionBar();
+        actionBar.hide();
     }
 
     private void findClients() {
@@ -124,4 +141,17 @@ public class MainActivity extends AppCompatActivity {
         server.onDestroy();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (prefs.getBoolean("firstrun", true)) {
+            // Do first run stuff here then set 'firstrun' as false
+            Intent intent = new Intent(this, CreateMasterUser.class);
+            startActivity(intent);
+            this.finish();
+            // using the following line to edit/commit prefs
+//            prefs.edit().putBoolean("firstrun", false).commit();
+        }
+    }
 }

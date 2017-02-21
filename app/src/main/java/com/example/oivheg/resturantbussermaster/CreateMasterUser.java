@@ -1,14 +1,29 @@
 package com.example.oivheg.resturantbussermaster;
 
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class CreateMasterUser extends AppCompatActivity implements View.OnClickListener {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class CreateMasterUser extends AppCompatActivity {
     private Button reg;
-    private TextView Rest, email, phone, contact, OrgNr;
+    public TextView Rest, email, phone, contact, OrgNr, txtAnswere;
+    ProgressBar progressBar;
+
+    //SQL Connection variables
+    Connection con;
+    String un, pass, db, ip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,20 +36,96 @@ public class CreateMasterUser extends AppCompatActivity implements View.OnClickL
         email = (TextView) findViewById(R.id.txtEmail);
         contact = (TextView) findViewById(R.id.txtcontact);
         OrgNr = (TextView) findViewById(R.id.txtOrgNR);
+        txtAnswere = (TextView) findViewById(R.id.txtAnswere);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        progressBar.setVisibility(View.GONE);
+// declaring server ip, username, database name and password
+
+// somehow this should be more secure, but for now this works
+        ip = "10.0.0.135:1433";
+        db = "ResturantBusser";
+        un = "android";
+        un = "android";
+        pass = "4bdk0jf2";
+
+        reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckLogin checkLogin = new CheckLogin();
+                checkLogin.execute("");
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
 
-        switch (v.getId()) {
-            case R.id.btnreg:
+    public class CheckLogin extends AsyncTask<String, String, String> {
 
+        String z = "";
+        Boolean isSuccess = false; // used to check wheter the login fails or not
 
-                // checking Data and start Sending to server code
-                break;
-            default:
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
         }
 
+        @Override
+        protected String doInBackground(String... params) {
+            String username = contact.getText().toString();
+            String _phone = phone.getText().toString();
+            if (username.trim().equals("") || _phone.trim().equals("")) {
+                z = "Please enter Contact and phone";
+            } else {
+                try {
+                    con = connectionclass(un, pass, db, ip);
+                    if (con == null) {
+
+                    } else {
+
+                        // Continue here, trying to show al info from the USERS Table .
+                        String query = "select * from Users";
+                        Statement stmt = con.createStatement();
+                        ResultSet rs = stmt.executeQuery(query);
+                        if (rs.next()) {
+                            z = "Login Successful";
+                            isSuccess = true;
+                            con.close();
+                        } else {
+                            z = "Invalid Credentials";
+                            txtAnswere.setText(rs.toString());
+                            isSuccess = false;
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    isSuccess = false;
+                    z = ex.getMessage();
+                }
+            }
+            return null;
+        }
+    }
+
+    public Connection connectionclass(String user, String password, String database, String server) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        Connection connection = null;
+        String ConnectionURL = null;
+        try {
+            //Code for connecting to database
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            ConnectionURL = "jdbc:jtds:sqlserver://" + server + ";"
+                    + "databaseName=" + database + ";user=" + user + ";password=" + password + ";";
+            connection = DriverManager.getConnection(ConnectionURL);
+        } catch (SQLException se) {
+            Log.e("error here 1 :", se.getMessage());
+        } catch (ClassNotFoundException e) {
+            Log.e("Error here 2 :", e.getMessage());
+        } catch (Exception e) {
+            Log.e("Error here 3 :", e.getMessage());
+        }
+        return connection;
     }
 }
+
+
