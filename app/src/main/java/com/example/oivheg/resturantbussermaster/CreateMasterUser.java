@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -42,12 +43,7 @@ public class CreateMasterUser extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
 // declaring server ip, username, database name and password
 
-// somehow this should be more secure, but for now this works
-        ip = "10.0.0.135:1433";
-        db = "ResturantBusser";
-        un = "android";
-        un = "android";
-        pass = "4bdk0jf2";
+
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,11 +69,15 @@ public class CreateMasterUser extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String username = contact.getText().toString();
             String _phone = phone.getText().toString();
+
+            System.out.println("Started connecting");
             if (username.trim().equals("") || _phone.trim().equals("")) {
                 z = "Please enter Contact and phone";
             } else {
                 try {
-                    con = connectionclass(un, pass, db, ip);
+                    DBHelper connectDb = new DBHelper();
+                    con = connectDb.connectionclass();
+                    System.out.println("I am Connected");
                     if (con == null) {
 
                     } else {
@@ -86,13 +86,17 @@ public class CreateMasterUser extends AppCompatActivity {
                         String query = "select * from Users";
                         Statement stmt = con.createStatement();
                         ResultSet rs = stmt.executeQuery(query);
+                        System.out.println("I Got some answers");
                         if (rs.next()) {
                             z = "Login Successful";
                             isSuccess = true;
+                            System.out.println("Correct Data entered");
+                            //contact.setText("Connecting");
                             con.close();
                         } else {
                             z = "Invalid Credentials";
-                            txtAnswere.setText(rs.toString());
+                            //txtAnswere.setText(rs.toString());
+                            System.out.println("Invalid Data entered");
                             isSuccess = false;
                         }
                     }
@@ -100,6 +104,8 @@ public class CreateMasterUser extends AppCompatActivity {
                 } catch (Exception ex) {
                     isSuccess = false;
                     z = ex.getMessage();
+
+
                 }
             }
             return null;

@@ -1,9 +1,9 @@
 package com.example.oivheg.resturantbussermaster;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,18 +13,23 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
+    public Boolean ASYNCisFInished = false;
     Server server;
     TextView infoip, msg;
     String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     List<String> activeUsers = new ArrayList();
     List<String> showUsers = new ArrayList();
     SharedPreferences prefs = null;
+    int UserCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +39,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
-        server = new Server(this);
-        infoip.setText(server.getIpAddress() + ":" + server.getPort());
+//        server = new Server(this);
+//        infoip.setText(server.getIpAddress() + ":" + server.getPort());
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         //HideStatusBar();
+        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
+        dbcheckUsers.execute("");
+        while (!ASYNCisFInished) {
+            ASYNCisFInished = dbcheckUsers.isSuccess;
+            System.out.println("waiting for async task to be finished");
+        }
 
-//        findClients();
-//        populateClients();
+        findClients();
+        PopulateTable();
+        dbcheckUsers.cancel(true);
     }
 
     private void HideStatusBar() {
@@ -81,19 +93,17 @@ public class MainActivity extends AppCompatActivity {
         NUM_COL = 0;
         UserCounter = 0;
         activeUsers.add(name);
-        findClients();
-        populateClients();
+//        findClients();
+//        PopulateTable();
     }
 
-    int UserCounter = 0;
-
-    private void populateClients() {
+    private void PopulateTable() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
-        table.removeAllViews();
+        // table.removeAllViews();
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
-            tableRow.setBackgroundColor(Color.BLACK);
+            tableRow.setBackgroundColor(Color.RED);
             tableRow.setLayoutParams(new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.MATCH_PARENT,
@@ -130,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void gridButtonClicked(String name) {
+    public void gridButtonClicked(String name) {
         //Toast message for buttons
         Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
     }
@@ -138,20 +148,75 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        server.onDestroy();
+        //  server.onDestroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (prefs.getBoolean("firstrun", true)) {
-            // Do first run stuff here then set 'firstrun' as false
-            Intent intent = new Intent(this, CreateMasterUser.class);
-            startActivity(intent);
-            this.finish();
-            // using the following line to edit/commit prefs
-//            prefs.edit().putBoolean("firstrun", false).commit();
+//        if (prefs.getBoolean("firstrun", true)) {
+//            // Do first run stuff here then set 'firstrun' as false
+//            Intent intent = new Intent(this, CreateMasterUser.class);
+//            startActivity(intent);
+//            this.finish();
+//            // using the following line to edit/commit prefs
+////            prefs.edit().putBoolean("firstrun", false).commit();
+//        }
+    }
+
+    public class CheckActiveUsers extends AsyncTask<String, String, String> {
+
+        String z = "";
+        Boolean isSuccess = false; // used to check wheter the login fails or not
+        Connection con;
+
+        @Override
+        protected void onPreExecute() {
+            msg.setText("Finding Active USERS");
+            // progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            super.onPostExecute(s);
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+
+            try {
+                DBHelper connectDb = new DBHelper();
+                con = connectDb.connectionclass();
+                if (con == null) {
+
+                } else {
+
+                    // Continue here, trying to show al info from the USERS Table .
+                    String query = "\n" +
+                            "  select * from Users where MasterID = 1;";
+                    Statement stmt = con.createStatement();
+                    ResultSet rs = stmt.executeQuery(query);
+
+                    while (rs.next()) {
+
+                        String first = rs.getString("UserName");
+                        addUser(first.trim());
+
+
+                    }
+                }
+
+            } catch (Exception ex) {
+                isSuccess = false;
+                z = ex.getMessage();
+            }
+            msg.setText("Users Found");
+            isSuccess = true;
+            return null;
         }
     }
 }
