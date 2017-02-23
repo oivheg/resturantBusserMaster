@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
 //        infoip.setText(server.getIpAddress() + ":" + server.getPort());
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         //HideStatusBar();
+        ActiveUsers();
+    }
+
+    private void ActiveUsers() {
         CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
         dbcheckUsers.execute("");
         while (!ASYNCisFInished) {
@@ -197,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
 
                     // Continue here, trying to show al info from the USERS Table .
                     String query = "\n" +
-                            "  select * from Users where MasterID = 1;";
+                            "select * from Users where MasterID = 1 and Active = 'yes';";
+
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
 
