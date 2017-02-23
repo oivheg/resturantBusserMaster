@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> showUsers = new ArrayList();
     SharedPreferences prefs = null;
     int UserCounter = 0;
+    Button btnrefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        btnrefresh = (Button) findViewById(R.id.btnrefresh);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
 //        server = new Server(this);
@@ -44,19 +46,32 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         //HideStatusBar();
         ActiveUsers();
+        btnrefresh.setOnClickListener(refreshlistener);
+
     }
 
+    View.OnClickListener refreshlistener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            ActiveUsers();
+        }
+    };
+
     private void ActiveUsers() {
+        activeUsers.clear();
+        msg.setText("Finding Active USERS");
         CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
         dbcheckUsers.execute("");
         while (!ASYNCisFInished) {
             ASYNCisFInished = dbcheckUsers.isSuccess;
             System.out.println("waiting for async task to be finished");
         }
-
+        msg.setText("Users Found");
         findClients();
         PopulateTable();
         dbcheckUsers.cancel(true);
+        dbcheckUsers.
+                msg.setText("Sync finsihed");
     }
 
     private void HideStatusBar() {
@@ -103,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void PopulateTable() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
-        // table.removeAllViews();
+        table.removeAllViews();
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
@@ -177,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            msg.setText("Finding Active USERS");
+
             // progressBar.setVisibility(View.VISIBLE);
         }
 
@@ -219,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                 isSuccess = false;
                 z = ex.getMessage();
             }
-            msg.setText("Users Found");
+
             isSuccess = true;
             return null;
         }
