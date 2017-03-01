@@ -18,9 +18,10 @@ public class DBHelper {
         StrictMode.setThreadPolicy(policy);
         Connection connection = null;
         String ConnectionURL = null;
-
+        String pcLocal = "10.0.0.135:1433";
+        String Ipserver = "91.192.221.155:1433";
         String server, database, user, password;
-        server = "10.0.0.135:1433";
+        server = Ipserver;
         database = "ResturantBusser";
         user = "android";
         password = "4bdk0jf2";

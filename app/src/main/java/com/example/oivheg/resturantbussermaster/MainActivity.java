@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void ActiveUsers() {
+        ASYNCisFInished = false;
         activeUsers.clear();
         msg.setText("Finding Active USERS");
         CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         findClients();
         PopulateTable();
         dbcheckUsers.cancel(true);
-        dbcheckUsers.
+
                 msg.setText("Sync finsihed");
     }
 
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Continue here, trying to show al info from the USERS Table .
                     String query = "\n" +
-                            "select * from Users where MasterID = 1 and Active = 'yes';";
+                            "select * from Users where MasterID = 1 and Active = 'true';";
 
                     Statement stmt = con.createStatement();
                     ResultSet rs = stmt.executeQuery(query);
