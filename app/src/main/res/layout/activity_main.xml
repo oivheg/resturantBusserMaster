@@ -44,7 +44,7 @@
                 android:layout_height="99dp"
                 android:width="50dp"
                 android:height="50dp"
-                android:id="@+id/button"
+                android:id="@+id/btnnotifyAll"
                 android:layout_weight="0.66"
                 android:background="@android:color/holo_green_dark" />
 

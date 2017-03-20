@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster;
+package com.example.oivheg.resturantbussermaster.Communication;
 
 import android.os.StrictMode;
 import android.util.Log;

@@ -13,11 +13,21 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
+import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
     private static int NUM_ROWS = 1;
@@ -25,12 +35,55 @@ public class MainActivity extends AppCompatActivity {
     public Boolean ASYNCisFInished = false;
     Server server;
     TextView infoip, msg;
-    String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
+    // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     List<String> activeUsers = new ArrayList();
-    List<String> showUsers = new ArrayList();
+    // List<String> showUsers = new ArrayList();
     SharedPreferences prefs = null;
     int UserCounter = 0;
-    Button btnrefresh;
+    Button btnrefresh, btnnotifyAll;
+    View.OnClickListener refreshListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            ActiveUsers();
+        }
+    };
+    View.OnClickListener notifyAllListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            NotifyAllUsers();
+        }
+    };
+
+    private void NotifyAllUsers() {
+
+        BusserRestClient.post("DinnerisReady", null, new JsonHttpResponseHandler() {
+            //client1.get(url, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
+                System.out.println("All users were notified" +
+                        success);
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+
+                System.out.println("Active JSON Object repsone    :" +
+                        success);
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
+            }
+        });
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         btnrefresh = (Button) findViewById(R.id.btnrefresh);
+        btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
 //        server = new Server(this);
@@ -46,16 +100,10 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         //HideStatusBar();
         ActiveUsers();
-        btnrefresh.setOnClickListener(refreshlistener);
+        btnrefresh.setOnClickListener(refreshListener);
+        btnnotifyAll.setOnClickListener(notifyAllListener);
 
     }
-
-    View.OnClickListener refreshlistener = new View.OnClickListener() {
-        public void onClick(View v) {
-
-            ActiveUsers();
-        }
-    };
 
     private void ActiveUsers() {
         ASYNCisFInished = false;
@@ -72,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         PopulateTable();
         dbcheckUsers.cancel(true);
 
-                msg.setText("Sync finsihed");
+        msg.setText("Sync finsihed");
     }
 
     private void HideStatusBar() {
