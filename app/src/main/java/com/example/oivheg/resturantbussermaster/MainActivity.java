@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,12 +57,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void NotifyAllUsers() {
 
-        BusserRestClient.post("DinnerisReady", null, new JsonHttpResponseHandler() {
+        BusserRestClientPost("DinnerForAll", null);
+
+    }
+
+    private void BusserRestClientPost(String apicall, RequestParams params) {
+        BusserRestClient.post(apicall, params, new JsonHttpResponseHandler() {
             //client1.get(url, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
                 System.out.println("All users were notified" +
                         success);
+
 
             }
 
@@ -76,14 +83,53 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
+
             @Override
-            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+            public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                System.out.print("ERROR" + res + "  status  " + statusCode + " Header:  " + headers);
+                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
             }
         });
-
     }
+
+
+    private void BusserRestClientGet(String apicall, RequestParams params) {
+        BusserRestClient.get(apicall, params, new JsonHttpResponseHandler() {
+            //client1.get(url, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
+                System.out.println("All users were notified" +
+                        success);
+
+                try {
+                    JSONObject tmp = success.getJSONObject(1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+
+                System.out.println("Active JSON Object repsone    :" +
+                        success);
+
+
+            }
+
+
+            @Override
+            public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
+            }
+        });
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,16 +155,20 @@ public class MainActivity extends AppCompatActivity {
         ASYNCisFInished = false;
         activeUsers.clear();
         msg.setText("Finding Active USERS");
-        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
-        dbcheckUsers.execute("");
-        while (!ASYNCisFInished) {
-            ASYNCisFInished = dbcheckUsers.isSuccess;
-            System.out.println("waiting for async task to be finished");
-        }
-        msg.setText("Users Found");
-        findClients();
-        PopulateTable();
-        dbcheckUsers.cancel(true);
+
+        BusserRestClientGet("GetAllActiveusers", null);
+
+
+//        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
+//        dbcheckUsers.execute("");
+//        while (!ASYNCisFInished) {
+//            ASYNCisFInished = dbcheckUsers.isSuccess;
+//            System.out.println("waiting for async task to be finished");
+//        }
+//        msg.setText("Users Found");
+//        findClients();
+//        PopulateTable();
+//        dbcheckUsers.cancel(true);
 
         msg.setText("Sync finsihed");
     }
@@ -211,6 +261,10 @@ public class MainActivity extends AppCompatActivity {
     public void gridButtonClicked(String name) {
         //Toast message for buttons
         Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
+        RequestParams params = new RequestParams();
+
+        params.put("UserName", name);
+        BusserRestClientPost("DinnerisReady", params);
     }
 
     @Override
