@@ -31,9 +31,9 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
+    public static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
-    public Boolean ASYNCisFInished = false;
     Server server;
     TextView infoip, msg;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
@@ -94,7 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void BusserRestClientGet(String apicall, RequestParams params) {
+
         BusserRestClient.get(apicall, params, new JsonHttpResponseHandler() {
+
+
             //client1.get(url, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
@@ -102,12 +105,19 @@ public class MainActivity extends AppCompatActivity {
                         success);
 
                 try {
-                    JSONObject tmp = success.getJSONObject(1);
+                    JSONObject curr = success.getJSONObject(1);
+                    for (int i = 0; i < success.length(); i++) {
+                        JSONObject jsonobject = success.getJSONObject(i);
+                        String UserName = jsonobject.getString("UserName");
+                        String AppId = jsonobject.getString("AppId");
+                        addUser(UserName);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-
+                findClients();
+                PopulateTable();
             }
 
             @Override
@@ -128,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
             }
         });
+
+
     }
 
 
@@ -155,14 +167,23 @@ public class MainActivity extends AppCompatActivity {
         ASYNCisFInished = false;
         activeUsers.clear();
         msg.setText("Finding Active USERS");
+        System.out.println("Main: Started looking for users");
+// her skal jeg få til å fikse while løkken fungerer ikke nå, den er stuck, hvordan løse dette ?
 
-        BusserRestClientGet("GetAllActiveusers", null);
+//        RequestParams params = new RequestParams();
+//
+//        params.put("MasterID", "1" );
+        int Master = 1;
+
+        BusserRestClientGet("GetAllActiveusers/" + Master, null);
+
+
 
 
 //        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
-//        dbcheckUsers.execute("");
+        // dbcheckUsers.execute("");
 //        while (!ASYNCisFInished) {
-//            ASYNCisFInished = dbcheckUsers.isSuccess;
+//           // ASYNCisFInished = dbcheckUsers.isSuccess;
 //            System.out.println("waiting for async task to be finished");
 //        }
 //        msg.setText("Users Found");
