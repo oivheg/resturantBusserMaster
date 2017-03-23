@@ -1,6 +1,7 @@
 package com.example.oivheg.resturantbussermaster;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
+import com.example.oivheg.resturantbussermaster.FCM.FCMLogin;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnrefresh, btnnotifyAll;
     View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
-
+            NUM_COL = 0;
             ActiveUsers();
         }
     };
@@ -54,6 +56,31 @@ public class MainActivity extends AppCompatActivity {
             NotifyAllUsers();
         }
     };
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        Intent activeUser = new Intent(MainActivity.this, FCMLogin.class);
+        this.startActivity(activeUser);
+
+        setContentView(R.layout.activity_main);
+        btnrefresh = (Button) findViewById(R.id.btnrefresh);
+        btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
+        infoip = (TextView) findViewById(R.id.infoip);
+        msg = (TextView) findViewById(R.id.msg);
+//        server = new Server(this);
+//        infoip.setText(server.getIpAddress() + ":" + server.getPort());
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        //HideStatusBar();
+        ActiveUsers();
+        btnrefresh.setOnClickListener(refreshListener);
+        btnnotifyAll.setOnClickListener(notifyAllListener);
+
+    }
+
 
     private void NotifyAllUsers() {
 
@@ -105,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         success);
 
                 try {
-                    JSONObject curr = success.getJSONObject(1);
+
                     for (int i = 0; i < success.length(); i++) {
                         JSONObject jsonobject = success.getJSONObject(i);
                         String UserName = jsonobject.getString("UserName");
@@ -116,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                findClients();
+                FindUsers();
                 PopulateTable();
             }
 
@@ -143,30 +170,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-        btnrefresh = (Button) findViewById(R.id.btnrefresh);
-        btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
-        infoip = (TextView) findViewById(R.id.infoip);
-        msg = (TextView) findViewById(R.id.msg);
-//        server = new Server(this);
-//        infoip.setText(server.getIpAddress() + ":" + server.getPort());
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
-        //HideStatusBar();
-        ActiveUsers();
-        btnrefresh.setOnClickListener(refreshListener);
-        btnnotifyAll.setOnClickListener(notifyAllListener);
-
-    }
 
     private void ActiveUsers() {
         ASYNCisFInished = false;
         activeUsers.clear();
-        msg.setText("Finding Active USERS");
+        msg.setText("MAIN: Finding Active USERS");
         System.out.println("Main: Started looking for users");
 // her skal jeg få til å fikse while løkken fungerer ikke nå, den er stuck, hvordan løse dette ?
 
@@ -174,10 +182,8 @@ public class MainActivity extends AppCompatActivity {
 //
 //        params.put("MasterID", "1" );
         int Master = 1;
-
+//Gets all active users for this specific Master
         BusserRestClientGet("GetAllActiveusers/" + Master, null);
-
-
 
 
 //        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
@@ -187,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 //            System.out.println("waiting for async task to be finished");
 //        }
 //        msg.setText("Users Found");
-//        findClients();
+//        FindUsers();
 //        PopulateTable();
 //        dbcheckUsers.cancel(true);
 
@@ -205,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
         actionBar.hide();
     }
 
-    private void findClients() {
+    // fins each user and sets the sixe of rows and columns
+    private void FindUsers() {
 //        NUM_COL = 0;
 
         // error here, that activates when there are more than 3 users,, then there are added an additional row.
@@ -219,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 tmp = Math.ceil(tmp);
                 NUM_ROWS = (int) tmp;
 
-            } else {
+            } else if (activeUsers.size() != 0) {
                 NUM_COL++;
             }
 
@@ -227,15 +234,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // adds user to the table, as well as setting columns and rows based on user.
     public void addUser(String name) {
         NUM_ROWS = 1;
         NUM_COL = 0;
         UserCounter = 0;
         activeUsers.add(name);
-//        findClients();
+//        FindUsers();
 //        PopulateTable();
     }
 
+    // Populates the table with the buttons for each user.
     private void PopulateTable() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
         table.removeAllViews();
@@ -243,14 +252,21 @@ public class MainActivity extends AppCompatActivity {
 
             TableRow tableRow = new TableRow(this);
             tableRow.setBackgroundColor(Color.RED);
-            tableRow.setLayoutParams(new TableLayout.LayoutParams(
+            TableLayout.LayoutParams lp = new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.MATCH_PARENT,
                     1.0f
-            ));
+            );
+//              lp.setMargins(10,10,10,10);
+            tableRow.setLayoutParams(lp);
 
 
-            table.addView(tableRow);
+            if (NUM_COL == 0) {
+
+            } else {
+                table.addView(tableRow);
+            }
+
 
             for (int col = 0; col < NUM_COL; col++) {
                 if (UserCounter >= activeUsers.size()) {
@@ -259,15 +275,20 @@ public class MainActivity extends AppCompatActivity {
                 final String FINAL_USER_NAME = activeUsers.get(UserCounter);
                 Button button = new Button(this);
                 UserCounter++;
-
+//int tmpsize = TableRow.LayoutParams.MATCH_PARENT / 3;
                 button.setLayoutParams(new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        1.0f));
+                        400,
+                        200));
+
+//                LayoutParams rowParam = new LayoutParams(match_parent, LayoutParams.WRAP_CONTENT);
+//
+//                button.setLayoutParams(rowParam);
+                button.setPadding(20, 20, 20, 20);
 
                 button.setBackgroundColor(Color.BLACK);
                 button.setBackgroundResource(R.drawable.waiter_no);
                 button.setText(FINAL_USER_NAME + " " + row + " " + col);
+
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -282,8 +303,9 @@ public class MainActivity extends AppCompatActivity {
     public void gridButtonClicked(String name) {
         //Toast message for buttons
         Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
-        RequestParams params = new RequestParams();
 
+//      creates request paramter with user, so that specific user are notified.
+        RequestParams params = new RequestParams();
         params.put("UserName", name);
         BusserRestClientPost("DinnerisReady", params);
     }
@@ -297,6 +319,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+//        Runs if there is no user logged in.
+//        Might be changed with FCm login auth, so that will handle this porocess
 
 //        if (prefs.getBoolean("firstrun", true)) {
 //            // Do first run stuff here then set 'firstrun' as false
@@ -308,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
     }
 
+    // Not in Use anymore
     public class CheckActiveUsers extends AsyncTask<String, String, String> {
 
         String z = "";

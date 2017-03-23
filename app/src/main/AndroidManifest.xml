@@ -23,6 +23,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateMasterUser"></activity>
+        <activity
+            android:name=".FCM.FCMLogin"
+            android:label="@string/title_activity_fcmlogin"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
