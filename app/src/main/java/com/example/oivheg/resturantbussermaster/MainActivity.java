@@ -1,11 +1,17 @@
 package com.example.oivheg.resturantbussermaster;
 
 import android.app.ActionBar;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +23,8 @@ import android.widget.Toast;
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
 import com.example.oivheg.resturantbussermaster.FCM.FCMLogin;
+import com.example.oivheg.resturantbussermaster.FCM.FCMMessageService;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -36,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
     public static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
-    Server server;
+    private static MainActivity ins;
+    private FCMMessageService myService;
+    private boolean bound = false;
+
     TextView infoip, msg;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     List<String> activeUsers = new ArrayList();
@@ -46,10 +57,16 @@ public class MainActivity extends AppCompatActivity {
     Button btnrefresh, btnnotifyAll;
     View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
-            NUM_COL = 0;
-            ActiveUsers();
+
+            refreshTable();
         }
     };
+
+    public void refreshTable() {
+        NUM_COL = 0;
+        ActiveUsers();
+    }
+
     View.OnClickListener notifyAllListener = new View.OnClickListener() {
         public void onClick(View v) {
 
@@ -57,15 +74,22 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
+    public static MainActivity getInstace() {
+        return ins;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        ins = this;
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.my.app.onMessageReceived");
+        BroadcastReceiver receiver = new MyBroadcastReceiver();
+        registerReceiver(receiver, intentFilter);
 
         Intent activeUser = new Intent(MainActivity.this, FCMLogin.class);
         this.startActivity(activeUser);
-
+        FirebaseMessaging.getInstance().subscribeToTopic("test");
         setContentView(R.layout.activity_main);
         btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
@@ -170,8 +194,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void ActiveUsers() {
+
         ASYNCisFInished = false;
         activeUsers.clear();
         msg.setText("MAIN: Finding Active USERS");
@@ -319,6 +343,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+
 //        Runs if there is no user logged in.
 //        Might be changed with FCm login auth, so that will handle this porocess
 
@@ -330,6 +356,16 @@ public class MainActivity extends AppCompatActivity {
 //            // using the following line to edit/commit prefs
 ////            prefs.edit().putBoolean("firstrun", false).commit();
 //        }
+    }
+
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+//            Bundle extras = intent.getExtras();
+//            String state = extras.getString("extra");
+            refreshTable();// update your textView in the main layout
+        }
     }
 
     // Not in Use anymore
