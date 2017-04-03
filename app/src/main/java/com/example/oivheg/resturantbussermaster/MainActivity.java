@@ -2,16 +2,13 @@ package com.example.oivheg.resturantbussermaster;
 
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -45,10 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
     private static MainActivity ins;
-    private FCMMessageService myService;
-    private boolean bound = false;
-
     TextView infoip, msg;
+    String MasterKey;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     List<String> activeUsers = new ArrayList();
     // List<String> showUsers = new ArrayList();
@@ -61,22 +56,28 @@ public class MainActivity extends AppCompatActivity {
             refreshTable();
         }
     };
-
-    public void refreshTable() {
-        NUM_COL = 0;
-        ActiveUsers();
-    }
-
     View.OnClickListener notifyAllListener = new View.OnClickListener() {
         public void onClick(View v) {
 
             NotifyAllUsers();
         }
     };
+    private FCMMessageService myService;
+    private boolean bound = false;
 
     public static MainActivity getInstace() {
         return ins;
     }
+
+    public void refreshTable() {
+        NUM_COL = 0;
+        ActiveUsers();
+    }
+
+    public void setMsterKey(String masterKey) {
+        MasterKey = masterKey;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 //        infoip.setText(server.getIpAddress() + ":" + server.getPort());
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         //HideStatusBar();
-        ActiveUsers();
+//        ActiveUsers();
         btnrefresh.setOnClickListener(refreshListener);
         btnnotifyAll.setOnClickListener(notifyAllListener);
 
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void ActiveUsers() {
+    public void ActiveUsers() {
 
         ASYNCisFInished = false;
         activeUsers.clear();
@@ -202,12 +203,12 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("Main: Started looking for users");
 // her skal jeg få til å fikse while løkken fungerer ikke nå, den er stuck, hvordan løse dette ?
 
-//        RequestParams params = new RequestParams();
-//
-//        params.put("MasterID", "1" );
+        RequestParams params = new RequestParams();
+//        MasterKey = msg.getText().toString().trim();
+        params.put("MasterKey", MasterKey);
         int Master = 1;
 //Gets all active users for this specific Master
-        BusserRestClientGet("GetAllActiveusers/" + Master, null);
+        BusserRestClientGet("GetAllActiveusers/", params);
 
 
 //        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();

@@ -35,7 +35,7 @@ public class FCMMessageService extends FirebaseMessagingService {
         sendBroadcast(intent);
 //        try {
 //
-//            MainActivity.getInstace().refreshTable();
+        MainActivity.getInstace().refreshTable();
 //        } catch (Exception e) {
 //            System.out.println("FCMMESSAGE: ERROR  " + e);
 //        }

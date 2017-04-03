@@ -1,15 +1,14 @@
 package com.example.oivheg.resturantbussermaster.FCM;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.MainActivity;
@@ -21,7 +20,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -32,6 +30,9 @@ import cz.msebera.android.httpclient.Header;
 
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "FCMLogin";
+    String MasterKey, ResttName, EMail;
+    SharedPreferences prefs = null;
+    TextView infoip, msg;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -54,21 +55,30 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     Toast.makeText(FCMLogin.this, " User is already logged in.",
                             Toast.LENGTH_LONG).show();
-                    RequestParams params = new RequestParams();
-                    params.put("MasterID", 1);
-                    params.put("AppId", getFCMToken());
-                    BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
-                        public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-                            // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                            // Handle resulting parsed JSON response here
+                    if (MasterKey != null) {
+                        RequestParams params = new RequestParams();
+                        params.put("MasterKey", MasterKey);
+                        params.put("AppId", getFCMToken());
+                        BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
+                            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                                // Handle resulting parsed JSON response here
 
-                            System.out.println("Active usccesessfull push to server    :" +
+                                System.out.println("Active usccesessfull push to server    :" +
 
-                                    success);
-                        }
+                                        success);
+                            }
 
-                    });
+                        });
 
+                    } else {
+//                        FirebaseAuth.getInstance().signOut();
+                    }
+
+                    MainActivity.getInstace().ActiveUsers();
+                    MainActivity.getInstace().setMsterKey(MasterKey);
+//                    msg = (TextView) findViewById(R.id.msg);
+//                    msg.setText( MasterKey);
                     finish();
                     return;
                 } else {
@@ -102,12 +112,15 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     public void onClick(View v) {
         EditText email = (EditText) findViewById(R.id.field_email);
         EditText pwd = (EditText) findViewById(R.id.field_password);
+        EditText rstname = (EditText) findViewById(R.id.field_rstname);
+        EMail = email.getText().toString();
         switch (v.getId()) {
             case R.id.btnlogin:
-                signIn(email.getText().toString(), pwd.getText().toString());
+                signIn(EMail, pwd.getText().toString());
                 break;
             case R.id.btncreateac:
                 createAccount(email.getText().toString(), pwd.getText().toString());
+                ResttName = rstname.getText().toString();
                 break;
             default:
         }
@@ -129,13 +142,53 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                             Toast.makeText(FCMLogin.this, "Login error",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            getFCMToken();
+                            MasterKey = ResttName.substring(0, 3) + getFCMToken().substring(0, 4);
+
+                            prefs.edit().putString("MasterKey", MasterKey).commit();
+
+                            CreateMaster(EMail);
+
                         }
 
                         // ...
                     }
                 });
     }
+
+    private void CreateMaster(String email) {
+
+        RequestParams params = new RequestParams();
+
+        //params.put("UserId", 11);
+        params.put("Resturant", ResttName);
+        params.put("MasterKey", MasterKey);
+        params.put("AppId", getFCMToken());
+        params.put("Email", email);
+        // ----------- Fake data as of now -------------//
+        params.put("Contact", "øivind S Heggland");
+        params.put("OrgNr", "no org");
+        params.put("Phone", 92627034);
+
+
+        BusserPost("CreateMaster", params, "FCMLOGIN:   Created user usccesessfull push to server    :");
+    }
+
+    private void BusserPost(String api, RequestParams _params, String message) {
+
+        final String _message = message;
+
+        BusserRestClient.post(api, _params, new JsonHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+
+                System.out.println(_message +
+                        success);
+            }
+
+        });
+    }
+
 
     public void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
@@ -161,7 +214,10 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onStart() {
         super.onStart();
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        MasterKey = prefs.getString("MasterKey", null);
         mAuth.addAuthStateListener(mAuthListener);
+
     }
 
     @Override
