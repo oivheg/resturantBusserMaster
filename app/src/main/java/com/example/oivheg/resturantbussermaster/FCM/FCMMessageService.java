@@ -1,9 +1,6 @@
 package com.example.oivheg.resturantbussermaster.FCM;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.example.oivheg.resturantbussermaster.MainActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -33,12 +30,15 @@ public class FCMMessageService extends FirebaseMessagingService {
         Intent intent = new Intent();
         intent.setAction("com.my.app.onMessageReceived");
         sendBroadcast(intent);
-//        try {
-//
-        MainActivity.getInstace().refreshTable();
-//        } catch (Exception e) {
-//            System.out.println("FCMMESSAGE: ERROR  " + e);
-//        }
+//        MainActivity.getInstace().refreshTable();
+
+//        Try catch is because this class runs 2 times and crashes the app,  should look for why and might fix
+        try {
+
+            MainActivity.getInstace().refreshTable();
+        } catch (Exception e) {
+            System.out.println("FCMMESSAGE: ERROR  " + e);
+        }
     }
 
 //    private void showNotification(String message) {

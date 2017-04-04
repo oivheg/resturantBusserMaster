@@ -53,8 +53,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    Toast.makeText(FCMLogin.this, " User is already logged in.",
-                            Toast.LENGTH_LONG).show();
+//                    Toast.makeText(FCMLogin.this, " User is already logged in.",
+//                            Toast.LENGTH_LONG).show();
                     if (MasterKey != null) {
                         RequestParams params = new RequestParams();
                         params.put("MasterKey", MasterKey);
@@ -101,8 +101,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private String getFCMToken() {
 
         String tkn = FirebaseInstanceId.getInstance().getToken();
-        Toast.makeText(FCMLogin.this, "Current token [" + tkn + "]",
-                Toast.LENGTH_LONG).show();
+//        Toast.makeText(FCMLogin.this, "Current token [" + tkn + "]",
+//                Toast.LENGTH_LONG).show();
         Log.d("Ap:FCM", "Token [" + tkn + "]");
         return tkn;
     }
@@ -139,8 +139,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(FCMLogin.this, "Login error",
-                                    Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(FCMLogin.this, "Login error",
+//                                    Toast.LENGTH_SHORT).show();
                         } else {
                             MasterKey = ResttName.substring(0, 3) + getFCMToken().substring(0, 4);
 
@@ -202,8 +202,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(FCMLogin.this, "Login error",
-                                    Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(FCMLogin.this, "Login error",
+//                                    Toast.LENGTH_SHORT).show();
                         }
 
                         // ...

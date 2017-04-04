@@ -11,17 +11,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
 import com.example.oivheg.resturantbussermaster.FCM.FCMLogin;
 import com.example.oivheg.resturantbussermaster.FCM.FCMMessageService;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -50,18 +50,30 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = null;
     int UserCounter = 0;
     Button btnrefresh, btnnotifyAll;
+    BroadcastReceiver receiver;
+
     View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
 
             refreshTable();
         }
     };
+    boolean allisnotified = false;
     View.OnClickListener notifyAllListener = new View.OnClickListener() {
         public void onClick(View v) {
+            if (allisnotified) {
+                btnnotifyAll.clearAnimation();
+                allisnotified = false;
+            } else {
+                btnNotifiedAnimation(btnnotifyAll);
+                NotifyAllUsers();
+                allisnotified = true;
+            }
 
-            NotifyAllUsers();
+
         }
     };
+    boolean wasNotified = false;
     private FCMMessageService myService;
     private boolean bound = false;
 
@@ -85,17 +97,18 @@ public class MainActivity extends AppCompatActivity {
         ins = this;
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.my.app.onMessageReceived");
-        BroadcastReceiver receiver = new MyBroadcastReceiver();
+        receiver = new MyBroadcastReceiver();
         registerReceiver(receiver, intentFilter);
 
         Intent activeUser = new Intent(MainActivity.this, FCMLogin.class);
         this.startActivity(activeUser);
-        FirebaseMessaging.getInstance().subscribeToTopic("test");
+//        FirebaseMessaging.getInstance().subscribeToTopic("test");
         setContentView(R.layout.activity_main);
         btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
+
 //        server = new Server(this);
 //        infoip.setText(server.getIpAddress() + ":" + server.getPort());
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
@@ -106,10 +119,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void NotifyAllUsers() {
 
-        BusserRestClientPost("DinnerForAll", null);
+        RequestParams params = new RequestParams();
+//        MasterKey = msg.getText().toString().trim();
+        params.put("mstrKey", MasterKey);
+        BusserRestClientPost("DinnerForAll?" + params, null);
 
     }
 
@@ -143,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void BusserRestClientGet(String apicall, RequestParams params) {
 
@@ -194,12 +208,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     public void ActiveUsers() {
 
         ASYNCisFInished = false;
         activeUsers.clear();
-        msg.setText("MAIN: Finding Active USERS");
+//        msg.setText("MAIN: Finding Active USERS");
         System.out.println("Main: Started looking for users");
 // her skal jeg få til å fikse while løkken fungerer ikke nå, den er stuck, hvordan løse dette ?
 
@@ -222,7 +235,8 @@ public class MainActivity extends AppCompatActivity {
 //        PopulateTable();
 //        dbcheckUsers.cancel(true);
 
-        msg.setText("Sync finsihed");
+//        msg.setText("Sync finsihed");
+        msg.setText(MasterKey);
     }
 
     private void HideStatusBar() {
@@ -298,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 final String FINAL_USER_NAME = activeUsers.get(UserCounter);
-                Button button = new Button(this);
+                final Button button = new Button(this);
                 UserCounter++;
 //int tmpsize = TableRow.LayoutParams.MATCH_PARENT / 3;
                 button.setLayoutParams(new TableRow.LayoutParams(
@@ -317,17 +331,32 @@ public class MainActivity extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        gridButtonClicked(FINAL_USER_NAME);
+                        if (wasNotified) {
+                            button.clearAnimation();
+                            wasNotified = false;
+                            return;
+                        } else {
+                            wasNotified = true;
+                            btnNotifiedAnimation(button);
+                            gridButtonClicked(FINAL_USER_NAME);
+                        }
+
                     }
                 });
+
                 tableRow.addView(button);
             }
         }
     }
 
+    private void btnNotifiedAnimation(Button button) {
+        Animation startAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btnblinking_animation);
+        button.startAnimation(startAnimation);
+    }
+
     public void gridButtonClicked(String name) {
         //Toast message for buttons
-        Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
 
 //      creates request paramter with user, so that specific user are notified.
         RequestParams params = new RequestParams();
@@ -339,11 +368,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //  server.onDestroy();
+
+        try {
+            if (receiver != null)
+                unregisterReceiver(receiver);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        MasterKey = prefs.getString("MasterKey", null);
 
 
 //        Runs if there is no user logged in.
