@@ -12,7 +12,7 @@ import com.loopj.android.http.RequestParams;
 public class BusserRestClient {
 
 
-    private static final String BASE_URL = "http://10.0.0.159:51080/api/UserAPI/";
+    private static final String BASE_URL = "http://91.189.171.231/restbusser/api/UserAPI/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 

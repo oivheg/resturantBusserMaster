@@ -19,14 +19,41 @@ public class FCMMessageService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        Refreshmaster(remoteMessage.getData());
+        System.out.print("From: " + remoteMessage.getFrom());
+
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+            System.out.print("Message data payload: " + remoteMessage.getData());
+
+            String tmpdata = remoteMessage.getData().get("Action");
+
+            switch (remoteMessage.getData().get("Action")) {
+                case "refresh":
+                    Refreshmaster(remoteMessage.getData());
+                    break;
+                case "recieved":
+                    String tmpUser = remoteMessage.getData().get("user");
+                    BtnOk(tmpUser);
+                    break;
+            }
+
+
+        }
+
+
 
 //        showNotification(remoteMessage.getData().get("message"));
     }
 
+    private void BtnOk(String user) {
+
+        MainActivity.getInstace().StopbtnBlink(user);
+
+    }
+
     private void Refreshmaster(Map<String, String> data) {
 
-
+        Map<String, String> tmpdata = data;
         Intent intent = new Intent();
         intent.setAction("com.my.app.onMessageReceived");
         sendBroadcast(intent);
@@ -40,24 +67,6 @@ public class FCMMessageService extends FirebaseMessagingService {
             System.out.println("FCMMESSAGE: ERROR  " + e);
         }
     }
-
-//    private void showNotification(String message) {
-//        Intent i = new Intent(this, MainActivity.class);
-//        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,i,PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-//                .setAutoCancel(true)
-//                .setContentTitle("FCm Test")
-//                .setContentText(message)
-//                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-//                .setContentIntent(pendingIntent);
-//
-//        NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//
-//        manager.notify(0,builder.build());
-//    }
 
 
 }

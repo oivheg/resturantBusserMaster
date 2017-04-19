@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
     private static MainActivity ins;
+
     TextView infoip, msg;
     String MasterKey;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
@@ -103,7 +104,9 @@ public class MainActivity extends AppCompatActivity {
         Intent activeUser = new Intent(MainActivity.this, FCMLogin.class);
         this.startActivity(activeUser);
 //        FirebaseMessaging.getInstance().subscribeToTopic("test");
+
         setContentView(R.layout.activity_main);
+
         btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
         infoip = (TextView) findViewById(R.id.infoip);
@@ -283,6 +286,29 @@ public class MainActivity extends AppCompatActivity {
 //        PopulateTable();
     }
 
+
+    public void StopbtnBlink(final String user) {
+        final View v = this.findViewById(R.id.activity_main);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Button b = (Button) v.findViewWithTag(user.trim());
+//                    b.setText("Melding Motatt");
+                    b.setPadding(10, 10, 10, 10);
+                    b.setAlpha(0.4f);
+//                    b.setBackgroundResource(0);
+                    b.setBackgroundColor(Color.GREEN);
+                } catch (Exception e) {
+                    System.out.println("FCMMESSAGE: ERROR  " + e);
+                }
+
+            }
+        });
+
+
+    }
+
     // Populates the table with the buttons for each user.
     private void PopulateTable() {
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
@@ -290,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
-            tableRow.setBackgroundColor(Color.RED);
+//            tableRow.setBackgroundColor(Color.RED);
             TableLayout.LayoutParams lp = new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
                     TableLayout.LayoutParams.MATCH_PARENT,
@@ -327,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 button.setBackgroundColor(Color.BLACK);
                 button.setBackgroundResource(R.drawable.waiter_no);
                 button.setText(FINAL_USER_NAME + " " + row + " " + col);
-
+                button.setTag(FINAL_USER_NAME.trim());
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -352,6 +378,7 @@ public class MainActivity extends AppCompatActivity {
     private void btnNotifiedAnimation(Button button) {
         Animation startAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btnblinking_animation);
         button.startAnimation(startAnimation);
+        button.setBackgroundColor(Color.rgb(255, 165, 0));
     }
 
     public void gridButtonClicked(String name) {

@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateMasterUser"></activity>
+        <!--<activity android:name=".CreateMasterUser"></activity>-->
         <activity
             android:name=".FCM.FCMLogin"
             android:label="@string/title_activity_fcmlogin"
