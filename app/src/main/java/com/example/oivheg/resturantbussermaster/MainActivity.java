@@ -296,9 +296,10 @@ public class MainActivity extends AppCompatActivity {
                     Button b = (Button) v.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                     b.setPadding(10, 10, 10, 10);
-                    b.setAlpha(0.4f);
+//                    b.setAlpha(0.4f);
 //                    b.setBackgroundResource(0);
                     b.setBackgroundColor(Color.GREEN);
+                    b.clearAnimation();
                 } catch (Exception e) {
                     System.out.println("FCMMESSAGE: ERROR  " + e);
                 }
@@ -360,6 +361,7 @@ public class MainActivity extends AppCompatActivity {
                         if (wasNotified) {
                             button.clearAnimation();
                             wasNotified = false;
+                            button.setBackgroundResource(R.drawable.waiter_no);
                             return;
                         } else {
                             wasNotified = true;
