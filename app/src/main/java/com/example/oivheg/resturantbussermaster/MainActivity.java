@@ -60,21 +60,24 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     boolean allisnotified = false;
+    boolean wasNotified = false;
     View.OnClickListener notifyAllListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (allisnotified) {
                 btnnotifyAll.clearAnimation();
+                btnnotifyAll.setBackgroundColor(Color.GREEN);
                 allisnotified = false;
+
             } else {
                 btnNotifiedAnimation(btnnotifyAll);
                 NotifyAllUsers();
                 allisnotified = true;
+
             }
 
 
         }
     };
-    boolean wasNotified = false;
     private FCMMessageService myService;
     private boolean bound = false;
 
@@ -110,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
+        btnnotifyAll.setVisibility(View.GONE);
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
 
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void NotifyAllUsers() {
-
+        wasNotified = true;
         RequestParams params = new RequestParams();
 //        MasterKey = msg.getText().toString().trim();
         params.put("mstrKey", MasterKey);
