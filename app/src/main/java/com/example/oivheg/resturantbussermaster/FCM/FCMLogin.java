@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.MainActivity;
@@ -146,6 +145,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
                             prefs.edit().putString("MasterKey", MasterKey).commit();
 
+                            MainActivity.getInstace().setMsterKey(MasterKey);
                             CreateMaster(EMail);
 
                         }
@@ -158,6 +158,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private void CreateMaster(String email) {
 
         RequestParams params = new RequestParams();
+        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs.edit().putString("MasterKey", MasterKey).commit();
 
         //params.put("UserId", 11);
         params.put("Resturant", ResttName);

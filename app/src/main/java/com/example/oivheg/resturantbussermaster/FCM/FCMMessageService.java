@@ -53,7 +53,6 @@ public class FCMMessageService extends FirebaseMessagingService {
 
     private void Refreshmaster(Map<String, String> data) {
 
-        Map<String, String> tmpdata = data;
         Intent intent = new Intent();
         intent.setAction("com.my.app.onMessageReceived");
         sendBroadcast(intent);

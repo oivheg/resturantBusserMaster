@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class CreateMasterUser extends AppCompatActivity {
-    private Button reg;
     public TextView Rest, email, phone, contact, OrgNr, txtAnswere;
     ProgressBar progressBar;
 
@@ -32,7 +31,7 @@ public class CreateMasterUser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_master_user);
 
-        reg = (Button) findViewById(R.id.btnreg);
+        Button reg = (Button) findViewById(R.id.btnreg);
         Rest = (TextView) findViewById(R.id.txtResturant);
         phone = (TextView) findViewById(R.id.txtphone);
         email = (TextView) findViewById(R.id.txtEmail);
@@ -55,6 +54,26 @@ public class CreateMasterUser extends AppCompatActivity {
         });
     }
 
+    public Connection connectionclass(String user, String password, String database, String server) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        Connection connection = null;
+        String ConnectionURL = null;
+        try {
+            //Code for connecting to database
+            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+            ConnectionURL = "jdbc:jtds:sqlserver://" + server + ";"
+                    + "databaseName=" + database + ";user=" + user + ";password=" + password + ";";
+            connection = DriverManager.getConnection(ConnectionURL);
+        } catch (SQLException se) {
+            Log.e("error here 1 :", se.getMessage());
+        } catch (ClassNotFoundException e) {
+            Log.e("Error here 2 :", e.getMessage());
+        } catch (Exception e) {
+            Log.e("Error here 3 :", e.getMessage());
+        }
+        return connection;
+    }
 
     public class CheckLogin extends AsyncTask<String, String, String> {
 
@@ -111,27 +130,6 @@ public class CreateMasterUser extends AppCompatActivity {
             }
             return null;
         }
-    }
-
-    public Connection connectionclass(String user, String password, String database, String server) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        Connection connection = null;
-        String ConnectionURL = null;
-        try {
-            //Code for connecting to database
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            ConnectionURL = "jdbc:jtds:sqlserver://" + server + ";"
-                    + "databaseName=" + database + ";user=" + user + ";password=" + password + ";";
-            connection = DriverManager.getConnection(ConnectionURL);
-        } catch (SQLException se) {
-            Log.e("error here 1 :", se.getMessage());
-        } catch (ClassNotFoundException e) {
-            Log.e("Error here 2 :", e.getMessage());
-        } catch (Exception e) {
-            Log.e("Error here 3 :", e.getMessage());
-        }
-        return connection;
     }
 }
 

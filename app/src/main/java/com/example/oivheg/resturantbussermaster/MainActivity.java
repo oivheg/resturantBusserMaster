@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setMsterKey(String masterKey) {
         MasterKey = masterKey;
+        msg.setText(MasterKey);
     }
 
     @Override
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < success.length(); i++) {
                         JSONObject jsonobject = success.getJSONObject(i);
                         String UserName = jsonobject.getString("UserName");
-                        String AppId = jsonobject.getString("AppId");
+//                        String AppId = jsonobject.getString("AppId");
                         addUser(UserName);
                     }
                 } catch (JSONException e) {
@@ -360,15 +361,17 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (wasNotified) {
                             button.clearAnimation();
-                            wasNotified = false;
-                            button.setBackgroundResource(R.drawable.waiter_no);
-                            return;
-                        } else {
-                            wasNotified = true;
-                            btnNotifiedAnimation(button);
-                            gridButtonClicked(FINAL_USER_NAME);
-                        }
 
+                            button.setBackgroundResource(R.drawable.waiter_no);
+
+//                            return;
+                        } else {
+
+                            btnNotifiedAnimation(button);
+
+
+                        }
+                        gridButtonClicked(FINAL_USER_NAME);
                     }
                 });
 
@@ -386,11 +389,20 @@ public class MainActivity extends AppCompatActivity {
     public void gridButtonClicked(String name) {
         //Toast message for buttons
 //        Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
+        if (wasNotified) {
 
-//      creates request paramter with user, so that specific user are notified.
-        RequestParams params = new RequestParams();
-        params.put("UserName", name);
-        BusserRestClientPost("DinnerisReady", params);
+            RequestParams params = new RequestParams();
+            params.put("UserName", name);
+            BusserRestClientPost("CancelDinner", params);
+            wasNotified = false;
+        } else {
+            //      creates request paramter with user, so that specific user are notified.
+            RequestParams params = new RequestParams();
+            params.put("UserName", name);
+            BusserRestClientPost("DinnerisReady", params);
+            wasNotified = true;
+        }
+
     }
 
     @Override
@@ -411,6 +423,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         MasterKey = prefs.getString("MasterKey", null);
+        MainActivity.getInstace().setMsterKey(MasterKey);
 
 
 //        Runs if there is no user logged in.
