@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">resturantBusserMaster</string>
+    <string name="app_name">KDRS Master</string>
     <string name="title_activity_fcmlogin">FCMLogin</string>
 </resources>
