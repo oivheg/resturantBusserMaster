@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.MainActivity;
@@ -22,9 +23,12 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
+
+import static com.example.oivheg.resturantbussermaster.Communication.BusserRestClient.post;
 
 
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
@@ -54,25 +58,29 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
 //                    Toast.makeText(FCMLogin.this, " User is already logged in.",
 //                            Toast.LENGTH_LONG).show();
-                    if (MasterKey != null) {
-                        RequestParams params = new RequestParams();
-                        params.put("MasterKey", MasterKey);
-                        params.put("AppId", getFCMToken());
-                        BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
-                            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-                                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                                // Handle resulting parsed JSON response here
 
-                                System.out.println("Active usccesessfull push to server    :" +
+                    RequestParams params = new RequestParams();
+//                        params.put("MasterKey", MasterKey);
+                    params.put("AppId", getFCMToken());
+                    BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            super.onSuccess(statusCode, headers, response);
+                        }
 
-                                        success);
-                            }
 
-                        });
+                        @Override
+                        public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                            // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                            // Handle resulting parsed JSON response here
+                            JSONObject test = success;
+                            System.out.println("Active usccesessfull push to server    :" +
 
-                    } else {
-//                        FirebaseAuth.getInstance().signOut();
-                    }
+                                    success);
+                        }
+
+                    });
+
 
                     MainActivity.getInstace().ActiveUsers();
                     MainActivity.getInstace().setMsterKey(MasterKey);
@@ -116,6 +124,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         switch (v.getId()) {
             case R.id.btnlogin:
                 signIn(EMail, pwd.getText().toString());
+
                 break;
             case R.id.btncreateac:
                 createAccount(email.getText().toString(), pwd.getText().toString());
@@ -179,7 +188,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
         final String _message = message;
 
-        BusserRestClient.post(api, _params, new JsonHttpResponseHandler() {
+        post(api, _params, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                 // Handle resulting parsed JSON response here
@@ -193,19 +202,38 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
 
     public void signIn(String email, String password) {
+        final String final_email = email;
         mAuth.signInWithEmailAndPassword(email, password)
+
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
+
+                        RequestParams params = new RequestParams();
+                        params.put("Email", final_email);
+                        params.put("AppId", getFCMToken());
+                        post("MasterAppId", params, new JsonHttpResponseHandler() {
+                            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+                                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                                // Handle resulting parsed JSON response here
+
+                                JSONObject test = success;
+
+                                System.out.println("Active usccesessfull push to server    :" +
+
+                                        success);
+                            }
+
+                        });
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-//                            Toast.makeText(FCMLogin.this, "Login error",
-//                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(FCMLogin.this, "Login error",
+                                    Toast.LENGTH_SHORT).show();
                         }
 
                         // ...

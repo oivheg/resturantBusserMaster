@@ -22,6 +22,7 @@ import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
 import com.example.oivheg.resturantbussermaster.FCM.FCMLogin;
 import com.example.oivheg.resturantbussermaster.FCM.FCMMessageService;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -223,10 +224,10 @@ public class MainActivity extends AppCompatActivity {
 //        msg.setText("MAIN: Finding Active USERS");
         System.out.println("Main: Started looking for users");
 // her skal jeg få til å fikse while løkken fungerer ikke nå, den er stuck, hvordan løse dette ?
-
+        String tkn = FirebaseInstanceId.getInstance().getToken();
         RequestParams params = new RequestParams();
 //        MasterKey = msg.getText().toString().trim();
-        params.put("MasterKey", MasterKey);
+        params.put("Appid", tkn);
         int Master = 1;
 //Gets all active users for this specific Master
         BusserRestClientGet("GetAllActiveusers/", params);

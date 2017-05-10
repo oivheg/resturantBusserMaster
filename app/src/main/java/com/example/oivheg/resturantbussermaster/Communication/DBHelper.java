@@ -21,7 +21,7 @@ public class DBHelper {
         String pcLocal = "10.0.0.135:1433";
         String Ipserver = "91.192.221.155:1433";
         String server, database, user, password;
-        server = Ipserver;
+        server = pcLocal;
         database = "ResturantBusser";
         user = "android";
         password = "4bdk0jf2";
