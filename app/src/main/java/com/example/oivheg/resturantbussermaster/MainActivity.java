@@ -92,8 +92,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setMsterKey(String masterKey) {
+
         MasterKey = masterKey;
-        msg.setText(MasterKey);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    msg.setText(MasterKey);
+                } catch (Exception e) {
+                    System.out.println("FCMMESSAGE: ERROR  " + e);
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -426,22 +439,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // this is going to be removed, as everything will be handled my appID and response will come from api
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         MasterKey = prefs.getString("MasterKey", null);
         MainActivity.getInstace().setMsterKey(MasterKey);
 
 
-//        Runs if there is no user logged in.
-//        Might be changed with FCm login auth, so that will handle this porocess
 
-//        if (prefs.getBoolean("firstrun", true)) {
-//            // Do first run stuff here then set 'firstrun' as false
-//            Intent intent = new Intent(this, CreateMasterUser.class);
-//            startActivity(intent);
-//            this.finish();
-//            // using the following line to edit/commit prefs
-////            prefs.edit().putBoolean("firstrun", false).commit();
-//        }
     }
 
 

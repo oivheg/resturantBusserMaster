@@ -23,7 +23,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -62,32 +62,26 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     RequestParams params = new RequestParams();
 //                        params.put("MasterKey", MasterKey);
                     params.put("AppId", getFCMToken());
+
                     BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                            super.onSuccess(statusCode, headers, response);
-                        }
-
+                        String Tmp = "Test ";
 
                         @Override
-                        public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-                            // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                            // Handle resulting parsed JSON response here
-                            JSONObject test = success;
-                            System.out.println("Active usccesessfull push to server    :" +
-
-                                    success);
+                        protected Object parseResponse(byte[] responseBody) throws JSONException {
+                            String s = new String(responseBody);
+                            s = s.replace("\"", "");
+                            MainActivity.getInstace().setMsterKey(s);
+                            return super.parseResponse(responseBody);
                         }
+
 
                     });
 
-
                     MainActivity.getInstace().ActiveUsers();
-                    MainActivity.getInstace().setMsterKey(MasterKey);
-//                    msg = (TextView) findViewById(R.id.msg);
-//                    msg.setText( MasterKey);
+
                     finish();
                     return;
+
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
