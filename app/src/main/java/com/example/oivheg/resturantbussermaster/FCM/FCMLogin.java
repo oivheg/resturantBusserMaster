@@ -44,6 +44,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_fcmlogin);
 
