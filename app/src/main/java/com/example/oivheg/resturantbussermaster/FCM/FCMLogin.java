@@ -36,9 +36,9 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     String MasterKey, ResttName, EMail;
     SharedPreferences prefs = null;
     TextView infoip, msg;
+    boolean isCreating = false;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +108,6 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         return tkn;
     }
 
-
     @Override
     public void onClick(View v) {
         EditText email = (EditText) findViewById(R.id.field_email);
@@ -121,8 +120,20 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
                 break;
             case R.id.btncreateac:
-                createAccount(email.getText().toString(), pwd.getText().toString());
-                ResttName = rstname.getText().toString();
+                if (isCreating) {
+                    createAccount(email.getText().toString(), pwd.getText().toString());
+                    ResttName = rstname.getText().toString();
+                    isCreating = false;
+                } else {
+                    isCreating = true;
+
+                    findViewById(R.id.btnlogin).setVisibility(View.GONE);
+                    findViewById(R.id.lay_eula).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lay_contact).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lay_Name).setVisibility(View.VISIBLE);
+                }
+
+
                 break;
             default:
         }

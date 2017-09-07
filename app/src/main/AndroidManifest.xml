@@ -26,7 +26,8 @@
         <activity
             android:name=".FCM.FCMLogin"
             android:label="@string/title_activity_fcmlogin"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan" />
 
         <service android:name=".FCM.FCMMessageService">
             <intent-filter>

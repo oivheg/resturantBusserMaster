@@ -14,10 +14,11 @@
         android:padding="50dp">
 
         <LinearLayout
+            android:id="@+id/lay_Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/field_rstname"
@@ -26,7 +27,9 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Resturant Name"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusRight="@+id/field_contact" />
 
             <EditText
                 android:id="@+id/field_contact"
@@ -35,16 +38,21 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Contact person"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusDown="@+id/field_phone" />
         </LinearLayout>
+
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/lay_contact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="50dp">
+        android:padding="50dp"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,7 +67,9 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Phone"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionNext"
+                android:inputType="numberSigned"
+                android:nextFocusRight="@+id/field_OrgNr" />
 
             <EditText
                 android:id="@+id/field_OrgNr"
@@ -68,16 +78,21 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="OrgNr"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:nextFocusDown="@+id/field_EULA" />
         </LinearLayout>
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/lay_eula"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="50dp">
+        android:imeOptions="actionNext"
+        android:padding="50dp"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,7 +107,9 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Approve EULA"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusRight="@+id/field_MISC" />
 
             <EditText
                 android:id="@+id/field_MISC"
@@ -101,7 +118,9 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Other info"
-                android:inputType="textPersonName" />
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"
+                android:nextFocusDown="@+id/field_email" />
         </LinearLayout>
 
     </RelativeLayout>
@@ -109,8 +128,9 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:gravity="center_vertical"
+        android:layout_weight="2.58"
+
+
         android:padding="50dp">
 
         <LinearLayout
@@ -127,7 +147,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="epost"
-                android:inputType="textEmailAddress" />
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:nextFocusRight="@+id/field_password" />
 
             <EditText
                 android:id="@+id/field_password"
