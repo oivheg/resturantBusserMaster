@@ -15,6 +15,8 @@ import java.util.Map;
 public class FCMMessageService extends FirebaseMessagingService {
 
 
+    boolean _justUpdated = false;
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -51,17 +53,31 @@ public class FCMMessageService extends FirebaseMessagingService {
 
     }
 
+    public boolean getUpdated() {
+        return _justUpdated;
+    }
     private void Refreshmaster(Map<String, String> data) {
 
         Intent intent = new Intent();
         intent.setAction("com.my.app.onMessageReceived");
         sendBroadcast(intent);
 //        MainActivity.getInstace().refreshTable();
+        while (_justUpdated) {
+            //Waiting until last process is finished.
+            try {
+                wait(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.print("Waiting for previous iternation to finish.");
+            _justUpdated = getUpdated();
+        }
 
 //        Try catch is because this class runs 2 times and crashes the app,  should look for why and might fix
         try {
-
+            _justUpdated = true;
             MainActivity.getInstace().refreshTable();
+            _justUpdated = false;
         } catch (Exception e) {
             System.out.println("FCMMESSAGE: ERROR  " + e);
         }

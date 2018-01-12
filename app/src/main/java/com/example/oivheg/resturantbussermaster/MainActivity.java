@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
 import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
+import com.example.oivheg.resturantbussermaster.Content.User;
 import com.example.oivheg.resturantbussermaster.FCM.FCMLogin;
 import com.example.oivheg.resturantbussermaster.FCM.FCMMessageService;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -34,10 +35,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-
 public class MainActivity extends AppCompatActivity {
     public static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     TextView infoip, msg;
     String MasterKey;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
-    List<String> activeUsers = new ArrayList();
+    List<String> lst_activeUsers = new ArrayList();
     // List<String> showUsers = new ArrayList();
     SharedPreferences prefs = null;
     int UserCounter = 0;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             refreshTable();
+
+
         }
     };
     boolean allisnotified = false;
@@ -67,11 +70,13 @@ public class MainActivity extends AppCompatActivity {
             if (allisnotified) {
                 btnnotifyAll.clearAnimation();
                 btnnotifyAll.setBackgroundColor(Color.GREEN);
+                NotifyAllUsers(true);
                 allisnotified = false;
-
+                NotifyAllUsers(true);
+                refreshTable();
             } else {
                 btnNotifiedAnimation(btnnotifyAll);
-                NotifyAllUsers();
+                NotifyAllUsers(false);
                 allisnotified = true;
 
             }
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+    ArrayList<User> lst_userisactive = new ArrayList<>();
     private FCMMessageService myService;
     private boolean bound = false;
 
@@ -88,7 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshTable() {
         NUM_COL = 0;
+        System.out.println("1:Startet refrehsing TABLE");
         ActiveUsers();
+        System.out.println("2: finished refrehsing TABLE");
+
     }
 
     public void setMsterKey(String masterKey) {
@@ -101,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     msg.setText(MasterKey);
                 } catch (Exception e) {
-                    System.out.println("FCMMESSAGE: ERROR  " + e);
+                    System.out.println("MAIN: ERROR Set Text MasterKey  " + e);
                 }
 
             }
@@ -127,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
-        btnnotifyAll.setVisibility(View.GONE);
+
         infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
 
@@ -141,13 +150,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void NotifyAllUsers() {
-        wasNotified = true;
+    private void NotifyAllUsers(boolean _CancelDinner) {
+
         RequestParams params = new RequestParams();
 //        MasterKey = msg.getText().toString().trim();
         params.put("mstrKey", MasterKey);
-        BusserRestClientPost("DinnerForAll?" + params, null);
-
+        if (_CancelDinner) {
+            wasNotified = false;
+            BusserRestClientPost("CancelDinnerForAll?" + params, null);
+            ChangeButtons(false);
+        } else {
+            wasNotified = true;
+            BusserRestClientPost("DinnerForAll?" + params, null);
+            ChangeButtons(true);
+        }
     }
 
     private void BusserRestClientPost(String apicall, RequestParams params) {
@@ -191,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONArray success) {
                 System.out.println("All users were notified" +
                         success);
-
                 try {
 
                     for (int i = 0; i < success.length(); i++) {
@@ -219,24 +234,21 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-
             @Override
             public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
             }
         });
-
-
     }
 
     public void ActiveUsers() {
 
         ASYNCisFInished = false;
-        activeUsers.clear();
+        lst_activeUsers.clear();
 //        msg.setText("MAIN: Finding Active USERS");
         System.out.println("Main: Started looking for users");
-// her skal jeg få til å fikse while løkken fungerer ikke nå, den er stuck, hvordan løse dette ?
+
         String tkn = FirebaseInstanceId.getInstance().getToken();
         RequestParams params = new RequestParams();
 //        MasterKey = msg.getText().toString().trim();
@@ -246,18 +258,6 @@ public class MainActivity extends AppCompatActivity {
         BusserRestClientGet("GetAllActiveusers/", params);
 
 
-//        CheckActiveUsers dbcheckUsers = new CheckActiveUsers();
-        // dbcheckUsers.execute("");
-//        while (!ASYNCisFInished) {
-//           // ASYNCisFInished = dbcheckUsers.isSuccess;
-//            System.out.println("waiting for async task to be finished");
-//        }
-//        msg.setText("Users Found");
-//        FindUsers();
-//        PopulateTable();
-//        dbcheckUsers.cancel(true);
-
-//        msg.setText("Sync finsihed");
         msg.setText(MasterKey);
     }
 
@@ -277,17 +277,17 @@ public class MainActivity extends AppCompatActivity {
 //        NUM_COL = 0;
 
         // error here, that activates when there are more than 3 users,, then there are added an additional row.
-        for (int users = 0; users < activeUsers.size(); users++) {
+        for (int users = 0; users < lst_activeUsers.size(); users++) {
 
             if (users >= 3) {
-                double tmp = ((double) activeUsers.size() / 3);
+                double tmp = ((double) lst_activeUsers.size() / 3);
                 if (tmp == 0) {
                     tmp = 1;
                 }
                 tmp = Math.ceil(tmp);
                 NUM_ROWS = (int) tmp;
 
-            } else if (activeUsers.size() != 0) {
+            } else if (lst_activeUsers.size() != 0) {
                 NUM_COL++;
             }
 
@@ -300,19 +300,46 @@ public class MainActivity extends AppCompatActivity {
         NUM_ROWS = 1;
         NUM_COL = 0;
         UserCounter = 0;
-        activeUsers.add(name);
+        lst_activeUsers.add(name);
 //        FindUsers();
 //        PopulateTable();
     }
 
+    private void ChangeButtons(final boolean _isBlinking) {
 
-    public void StopbtnBlink(final String user) {
-        final View v = this.findViewById(R.id.activity_main);
+
+        final View view = this.findViewById(R.id.activity_main);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Button b = (Button) v.findViewWithTag(user.trim());
+                    for (String user : lst_activeUsers) {
+                        Button b = (Button) view.findViewWithTag(user.trim());
+//                    b.setText("Melding Motatt");
+                        if (_isBlinking) {
+                            btnNotifiedAnimation(b);
+                        } else {
+                            b.clearAnimation();
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("MAIN: ERROR Could not StopBlink" + e);
+                }
+
+            }
+        });
+
+
+    }
+
+
+    public void StopbtnBlink(final String user) {
+        final View view = this.findViewById(R.id.activity_main);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Button b = (Button) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                     b.setPadding(10, 10, 10, 10);
 //                    b.setAlpha(0.4f);
@@ -320,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
                     b.setBackgroundColor(Color.GREEN);
                     b.clearAnimation();
                 } catch (Exception e) {
-                    System.out.println("FCMMESSAGE: ERROR  " + e);
+                    System.out.println("MAIN: ERROR Could not StopBlink" + e);
                 }
 
             }
@@ -354,38 +381,39 @@ public class MainActivity extends AppCompatActivity {
 
 
             for (int col = 0; col < NUM_COL; col++) {
-                if (UserCounter >= activeUsers.size()) {
+                if (UserCounter >= lst_activeUsers.size()) {
                     break;
                 }
-                final String FINAL_USER_NAME = activeUsers.get(UserCounter);
+                final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter);
                 final Button button = new Button(this);
                 UserCounter++;
 //int tmpsize = TableRow.LayoutParams.MATCH_PARENT / 3;
                 button.setLayoutParams(new TableRow.LayoutParams(
                         400,
                         200));
-
 //                LayoutParams rowParam = new LayoutParams(match_parent, LayoutParams.WRAP_CONTENT);
 //
 //                button.setLayoutParams(rowParam);
-                button.setPadding(20, 20, 20, 20);
+                //button.setPadding(100, 20, 20, 20);
+//button.setBackgroundColor(Color.RED);
+//
 
-                button.setBackgroundColor(Color.BLACK);
+
                 button.setBackgroundResource(R.drawable.waiter_no);
+
+
                 button.setText(FINAL_USER_NAME + " " + row + " " + col);
                 button.setTag(FINAL_USER_NAME.trim());
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (wasNotified) {
-                            button.clearAnimation();
-
-                            button.setBackgroundResource(R.drawable.waiter_no);
+                            ClearButtonAnimation(button);
 
 //                            return;
                         } else {
 
-                            btnNotifiedAnimation(button);
+                            // btnNotifiedAnimation(button);
 
 
                         }
@@ -396,6 +424,39 @@ public class MainActivity extends AppCompatActivity {
                 tableRow.addView(button);
             }
         }
+
+        RestoreUsers();
+    }
+
+    private void ClearButtonAnimation(Button button) {
+        button.clearAnimation();
+
+        button.setBackgroundResource(R.drawable.waiter_no);
+    }
+
+    private void RestoreUsers() {
+
+        for (final User user : lst_userisactive) {
+            final View view = this.findViewById(R.id.activity_main);
+            if (user.isNotified) {
+                System.out.println("3:Startet refrehsing TABLE");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Button b = (Button) view.findViewWithTag(user.Name.trim());
+                            b.setBackgroundColor(Color.GREEN);
+                        } catch (Exception e) {
+                            System.out.println("MAIN: RestoreUSers ERROR Set Button bacground failed  " + e);
+                        }
+
+                    }
+                });
+            }
+
+        }
+
     }
 
     private void btnNotifiedAnimation(Button button) {
@@ -410,15 +471,25 @@ public class MainActivity extends AppCompatActivity {
         if (wasNotified) {
 
             RequestParams params = new RequestParams();
-            params.put("UserName", name);
+            params.put("UserName", name.trim());
             BusserRestClientPost("CancelDinner", params);
             wasNotified = false;
+            Iterator<User> user = lst_userisactive.iterator();
+            while (user.hasNext()) {
+                User usr = user.next();
+                if (usr.Name.equals(name)) {
+                    user.remove();
+                }
+            }
+
         } else {
             //      creates request paramter with user, so that specific user are notified.
             RequestParams params = new RequestParams();
-            params.put("UserName", name);
+            params.put("UserName", name.trim());
             BusserRestClientPost("DinnerisReady", params);
             wasNotified = true;
+            User User = new User(name, wasNotified);
+            lst_userisactive.add(User);
         }
 
     }
@@ -444,7 +515,6 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
         MasterKey = prefs.getString("MasterKey", null);
         MainActivity.getInstace().setMsterKey(MasterKey);
-
 
 
     }

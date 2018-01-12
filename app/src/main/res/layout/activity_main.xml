@@ -50,13 +50,10 @@
             <Button
                 android:id="@+id/btnnotifyAll"
                 android:layout_width="wrap_content"
-                android:layout_height="99dp"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:width="50dp"
-                android:height="50dp"
                 android:background="@android:color/holo_green_dark"
                 android:text="Call All users" />
-
             <Button
                 android:id="@+id/btnrefresh"
                 android:layout_width="wrap_content"
@@ -64,6 +61,7 @@
                 android:layout_weight="0.11"
                 android:background="@color/kdrYellow"
                 android:text="Refresh" />
+
 
         </LinearLayout>
 
