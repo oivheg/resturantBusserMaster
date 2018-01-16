@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
 //                            return;
                         } else {
 
-                            // btnNotifiedAnimation(button);
+                            btnNotifiedAnimation(button);
 
 
                         }
