@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -39,6 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
+
 public class MainActivity extends AppCompatActivity {
     public static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
@@ -85,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     ArrayList<User> lst_userisactive = new ArrayList<>();
+    //int _ButtonShape = R.drawable.round_button;
+    int _backgorundimage = R.drawable.waiter_no;
+    int _ButtonShape = R.drawable.btn_ripple;
     private FCMMessageService myService;
     private boolean bound = false;
 
@@ -314,10 +321,10 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     for (String user : lst_activeUsers) {
-                        Button b = (Button) view.findViewWithTag(user.trim());
+                        ImageButton b = (ImageButton) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
-                            btnNotifiedAnimation(b);
+                            CivNotifiedAnimation(b);
                         } else {
                             b.clearAnimation();
                         }
@@ -332,19 +339,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     public void StopbtnBlink(final String user) {
         final View view = this.findViewById(R.id.activity_main);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Button b = (Button) view.findViewWithTag(user.trim());
+                    ImageButton b = (ImageButton) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                     b.setPadding(10, 10, 10, 10);
 //                    b.setAlpha(0.4f);
 //                    b.setBackgroundResource(0);
-                    b.setBackgroundColor(Color.GREEN);
+                    // b.setBackgroundColor(Color.GREEN);
+                    //b.setImageResource(_backgorundimage);
+                    b.setBackgroundResource(_ButtonShape);
                     b.clearAnimation();
                 } catch (Exception e) {
                     System.out.println("MAIN: ERROR Could not StopBlink" + e);
@@ -365,12 +373,15 @@ public class MainActivity extends AppCompatActivity {
             TableRow tableRow = new TableRow(this);
 //            tableRow.setBackgroundColor(Color.RED);
             TableLayout.LayoutParams lp = new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    TableLayout.LayoutParams.MATCH_PARENT,
-                    1.0f
+                    TableLayout.LayoutParams.WRAP_CONTENT,
+                    TableLayout.LayoutParams.WRAP_CONTENT,
+                    0.1f
             );
-//              lp.setMargins(10,10,10,10);
-            tableRow.setLayoutParams(lp);
+//            lp.setMargins(10,10,10,10);
+//            lp.rightMargin = 10;
+            //tableRow.setLayoutParams(lp);
+
+//tableRow.setPadding(10,10,10,10);
 
 
             if (NUM_COL == 0) {
@@ -385,24 +396,17 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter);
-                final Button button = new Button(this);
+                final ImageButton button = new ImageButton(this);
                 UserCounter++;
 //int tmpsize = TableRow.LayoutParams.MATCH_PARENT / 3;
                 button.setLayoutParams(new TableRow.LayoutParams(
                         400,
                         200));
-//                LayoutParams rowParam = new LayoutParams(match_parent, LayoutParams.WRAP_CONTENT);
-//
-//                button.setLayoutParams(rowParam);
-                //button.setPadding(100, 20, 20, 20);
-//button.setBackgroundColor(Color.RED);
-//
 
-
-                button.setBackgroundResource(R.drawable.waiter_no);
-
-
-                button.setText(FINAL_USER_NAME + " " + row + " " + col);
+                button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                button.setImageResource(_backgorundimage);
+                button.setBackgroundResource(_ButtonShape);
+                //button.setText(FINAL_USER_NAME + " " + row + " " + col);
                 button.setTag(FINAL_USER_NAME.trim());
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -413,25 +417,30 @@ public class MainActivity extends AppCompatActivity {
 //                            return;
                         } else {
 
-                            btnNotifiedAnimation(button);
+                            CivNotifiedAnimation(button);
 
 
                         }
                         gridButtonClicked(FINAL_USER_NAME);
                     }
                 });
+                RelativeLayout RL = new RelativeLayout(this);
 
-                tableRow.addView(button);
+                TextView tv = new TextView(this);
+                tv.setText("Test");
+                RL.addView(tv);
+                RL.addView(button);
+                tableRow.addView(RL);
             }
         }
 
         RestoreUsers();
     }
 
-    private void ClearButtonAnimation(Button button) {
+    private void ClearButtonAnimation(ImageButton button) {
         button.clearAnimation();
-
-        button.setBackgroundResource(R.drawable.waiter_no);
+        //button.setBackgroundColor(Color.BLACK);
+        button.setBackgroundResource(_ButtonShape);
     }
 
     private void RestoreUsers() {
@@ -457,6 +466,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private void CivNotifiedAnimation(ImageButton button) {
+        Animation startAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btnblinking_animation);
+        button.startAnimation(startAnimation);
+        //button.setBackgroundColor(Color.rgb(255, 165, 0));
     }
 
     private void btnNotifiedAnimation(Button button) {
