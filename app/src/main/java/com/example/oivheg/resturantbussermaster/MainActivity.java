@@ -10,13 +10,12 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -42,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
     public static Boolean ASYNCisFInished = false;
@@ -321,12 +321,13 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     for (String user : lst_activeUsers) {
-                        ImageButton b = (ImageButton) view.findViewWithTag(user.trim());
+                        CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
                             CivNotifiedAnimation(b);
                         } else {
                             b.clearAnimation();
+
                         }
                     }
                 } catch (Exception e) {
@@ -345,15 +346,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    ImageButton b = (ImageButton) view.findViewWithTag(user.trim());
+                    CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
-                    b.setPadding(10, 10, 10, 10);
+                    b.setPadding(30, 30, 30, 30);
 //                    b.setAlpha(0.4f);
 //                    b.setBackgroundResource(0);
                     // b.setBackgroundColor(Color.GREEN);
                     //b.setImageResource(_backgorundimage);
-                    b.setBackgroundResource(_ButtonShape);
+                    //  b.setBackgroundResource(_backgorundimage);
                     b.clearAnimation();
+                    b.setBorderWidth(10);
+                    b.setBorderColor(Color.GREEN);
                 } catch (Exception e) {
                     System.out.println("MAIN: ERROR Could not StopBlink" + e);
                 }
@@ -366,21 +369,24 @@ public class MainActivity extends AppCompatActivity {
 
     // Populates the table with the buttons for each user.
     private void PopulateTable() {
+
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
         table.removeAllViews();
+        //table.setBackgroundColor(Color.GREEN);
+        //table.setLayoutParams(lp);
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
 //            tableRow.setBackgroundColor(Color.RED);
-            TableLayout.LayoutParams lp = new TableLayout.LayoutParams(
-                    TableLayout.LayoutParams.WRAP_CONTENT,
-                    TableLayout.LayoutParams.WRAP_CONTENT,
-                    0.1f
-            );
+//            tableRow.setGravity(Gravity.CENTER_HORIZONTAL);
+//            TableRow.LayoutParams lp = new TableRow.LayoutParams(
+//                    TableRow.LayoutParams.MATCH_PARENT,
+//                    200
+//            );
 //            lp.setMargins(10,10,10,10);
 //            lp.rightMargin = 10;
             //tableRow.setLayoutParams(lp);
-
+//tableRow.setBackgroundColor(Color.YELLOW);
 //tableRow.setPadding(10,10,10,10);
 
 
@@ -396,16 +402,24 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter);
-                final ImageButton button = new ImageButton(this);
+                final CircleImageView button = new CircleImageView(this);
                 UserCounter++;
-//int tmpsize = TableRow.LayoutParams.MATCH_PARENT / 3;
-                button.setLayoutParams(new TableRow.LayoutParams(
-                        400,
-                        200));
 
-                button.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                TableRow.LayoutParams tblParams = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        250, 1.0F);
+//                tblParams.gravity = Gravity.CENTER;
+                //button.setLayoutParams(tblParams);
+                // tableRow.setOrientation(LinearLayout.VERTICAL);
+
+                //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
+
                 button.setImageResource(_backgorundimage);
-                button.setBackgroundResource(_ButtonShape);
+                //button.setBackgroundColor(Color.RED);
+                button.setBorderWidth(3);
+                button.setBorderColor(Color.YELLOW);
+                button.setPadding(10, 0, 0, 0);
+                //button.setBackgroundResource(_backgorundimage);
                 //button.setText(FINAL_USER_NAME + " " + row + " " + col);
                 button.setTag(FINAL_USER_NAME.trim());
                 button.setOnClickListener(new View.OnClickListener() {
@@ -413,7 +427,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (wasNotified) {
                             ClearButtonAnimation(button);
-
+                            button.setPadding(0, 0, 0, 0);
+                            button.setBorderColor(Color.YELLOW);
+                            button.setBorderWidth(2);
 //                            return;
                         } else {
 
@@ -424,23 +440,42 @@ public class MainActivity extends AppCompatActivity {
                         gridButtonClicked(FINAL_USER_NAME);
                     }
                 });
-                RelativeLayout RL = new RelativeLayout(this);
+                LinearLayout LL = new LinearLayout(this);
 
                 TextView tv = new TextView(this);
-                tv.setText("Test");
-                RL.addView(tv);
-                RL.addView(button);
-                tableRow.addView(RL);
+
+                tv.setText(FINAL_USER_NAME + " " + row + " " + col);
+                tv.setGravity(Gravity.CENTER);
+                // tv.setLayoutParams(tblParams);
+                LL.setOrientation(LinearLayout.VERTICAL);
+                //LL.setBackgroundColor(Color.BLUE);
+
+
+//                attributLayoutParams.gravity = Gravity.CENTER;
+//
+
+
+                LL.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.MATCH_PARENT, 1.0F));
+                // LL.setGravity(Gravity.CENTER);
+
+
+                LL.addView(button);
+                LL.addView(tv);
+
+                tableRow.addView(LL);
+
             }
         }
 
         RestoreUsers();
     }
 
-    private void ClearButtonAnimation(ImageButton button) {
+    private void ClearButtonAnimation(CircleImageView button) {
         button.clearAnimation();
         //button.setBackgroundColor(Color.BLACK);
-        button.setBackgroundResource(_ButtonShape);
+        //button.setBackgroundResource(_backgorundimage);
     }
 
     private void RestoreUsers() {
@@ -468,10 +503,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void CivNotifiedAnimation(ImageButton button) {
+    private void CivNotifiedAnimation(CircleImageView button) {
         Animation startAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btnblinking_animation);
+
+        button.setBorderWidth(20);
         button.startAnimation(startAnimation);
-        //button.setBackgroundColor(Color.rgb(255, 165, 0));
+        button.setBorderColor(Color.rgb(255, 165, 0));
+        // button.setBackgroundColor(Color.rgb(255, 165, 0));
     }
 
     private void btnNotifiedAnimation(Button button) {
