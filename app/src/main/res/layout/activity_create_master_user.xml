@@ -9,14 +9,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
-    <!--tools:context="com.example.oivheg.resturantbussermaster.CreateMasterUser"-->
+    <!--tools:conteCreateMasterUserUser"-->
 
 
     <EditText
         android:id="@+id/txtResturant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Resturant" />
@@ -25,8 +24,6 @@
         android:id="@+id/txtEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtResturant"
         android:ems="10"
         android:inputType="textEmailAddress"
         android:text="Email" />
@@ -35,8 +32,6 @@
         android:id="@+id/txtphone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtEmail"
         android:ems="10"
         android:inputType="phone"
         android:text="Phone" />
@@ -45,7 +40,6 @@
         android:id="@+id/txtOrgNR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="30dp"
         android:ems="10"
         android:inputType="number"
@@ -55,7 +49,6 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtOrgNR"
         android:layout_marginTop="25dp"
         android:text="Jeg godtar elua avatlen ved å trykke på REGISTRER knappen" />
 
@@ -63,8 +56,6 @@
         android:id="@+id/txtcontact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/txtEmail"
-        android:layout_alignEnd="@+id/btnreg"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="contact" />
@@ -74,26 +65,19 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnreg"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="19dp" />
 
     <Button
         android:id="@+id/btnreg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtphone"
         android:layout_marginStart="98dp"
-        android:layout_toEndOf="@+id/txtCreditcard"
         android:text="Registrer" />
 
     <EditText
         android:id="@+id/txtAnswere"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/txtCreditcard"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
         android:ems="10"
         android:inputType="textMultiLine" />
 

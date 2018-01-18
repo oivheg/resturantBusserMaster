@@ -1,10 +1,10 @@
-package com.example.oivheg.resturantbussermaster.FCM;
+package com.kdr.oivheg.resturantbussermaster.fcm;
 
 import android.content.Intent;
 
-import com.example.oivheg.resturantbussermaster.MainActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.kdr.oivheg.resturantbussermaster.MainActivity;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 public class FCMMessageService extends FirebaseMessagingService {
 
 
-    boolean _justUpdated = false;
+    private boolean _justUpdated = false;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -53,7 +53,7 @@ public class FCMMessageService extends FirebaseMessagingService {
 
     }
 
-    public boolean getUpdated() {
+    private boolean getUpdated() {
         return _justUpdated;
     }
     private void Refreshmaster(Map<String, String> data) {

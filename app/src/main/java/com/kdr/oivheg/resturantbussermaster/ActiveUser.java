@@ -1,14 +1,7 @@
-package com.example.oivheg.resturantbussermaster;
+package com.kdr.oivheg.resturantbussermaster;
 
 
-import android.content.Context;
-import android.graphics.Color;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-
-import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
+import com.kdr.oivheg.resturantbussermaster.communication.BusserRestClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -17,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -25,13 +19,13 @@ import cz.msebera.android.httpclient.Header;
  * Created by oivhe on 13.02.2017.
  */
 
-public class ActiveUser {
+class ActiveUser {
 
-    public static Boolean ASYNCisFInished = false;
+    private static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
-    List<String> activeUsers = new ArrayList();
-    int UserCounter = 0;
+    private final List<String> activeUsers = new ArrayList();
+    private int UserCounter = 0;
 
     public void ActiveUsers() {
         NUM_COL = 0;
@@ -46,7 +40,7 @@ public class ActiveUser {
 //        params.put("MasterID", "1" );
         int Master = 1;
 //Gets all active users for this specific Master
-        BusserRestClientGet("GetAllActiveusers/" + Master, null);
+        BusserRestClientGet("GetAllActiveusers/" + Master);
 
 
     }
@@ -77,15 +71,15 @@ public class ActiveUser {
             @Override
             public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
+                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + Arrays.toString(header));
             }
         });
     }
 
 
-    private void BusserRestClientGet(String apicall, RequestParams params) {
+    private void BusserRestClientGet(String apicall) {
 
-        BusserRestClient.get(apicall, params, new JsonHttpResponseHandler() {
+        BusserRestClient.get(apicall, null, new JsonHttpResponseHandler() {
 
 
             //client1.get(url, new JsonHttpResponseHandler() {
@@ -125,7 +119,7 @@ public class ActiveUser {
             @Override
             public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
+                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + Arrays.toString(header));
             }
         });
 
@@ -156,7 +150,7 @@ public class ActiveUser {
     }
 
     // adds user to the table, as well as setting columns and rows based on user.
-    public void addUser(String name) {
+    private void addUser(String name) {
         NUM_ROWS = 1;
         NUM_COL = 0;
         UserCounter = 0;

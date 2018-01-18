@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster;
+package com.kdr.oivheg.resturantbussermaster;
 
 
 import static junit.framework.Assert.assertEquals;
@@ -9,9 +9,9 @@ import static junit.framework.Assert.assertEquals;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class ExampleUnitTest {
+class ExampleUnitTest {
 
-    public void addition_isCorrect() throws Exception {
+    public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
 }

@@ -11,8 +11,8 @@
 //import java.sql.SQLException;
 //import java.sql.Statement;
 //
-//import static com.example.oivheg.resturantbussermaster.R.id.progressBar;
-//import static com.example.oivheg.resturantbussermaster.R.id.txtAnswere;
+//import static com.kdr.oivheg.resturantbussermaster.R.id.progressBar;
+//import static com.kdr.oivheg.resturantbussermaster.R.id.txtAnswere;
 //
 ///**
 // * Created by oivhe on 21.02.2017.

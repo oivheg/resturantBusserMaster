@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster;
+package com.kdr.oivheg.resturantbussermaster;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
+import com.kdr.oivheg.resturantbussermaster.communication.DBHelper;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,13 +18,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class CreateMasterUser extends AppCompatActivity {
-    public TextView Rest, email, phone, contact, OrgNr, txtAnswere;
-    ProgressBar progressBar;
-
-    //SQL Connection variables
-    Connection con;
+public abstract class CreateMasterUser extends AppCompatActivity {
     String un, pass, db, ip;
+    private TextView Rest;
+    private TextView email;
+    private TextView phone;
+    private TextView contact;
+    private TextView OrgNr;
+    private TextView txtAnswere;
+    private ProgressBar progressBar;
+    //SQL Connection variables
+    private Connection con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,7 @@ public class CreateMasterUser extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Connection connection = null;
-        String ConnectionURL = null;
+        String ConnectionURL;
         try {
             //Code for connecting to database
             Class.forName("net.sourceforge.jtds.jdbc.Driver");

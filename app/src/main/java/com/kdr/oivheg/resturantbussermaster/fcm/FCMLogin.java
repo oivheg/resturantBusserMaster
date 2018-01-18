@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster.FCM;
+package com.kdr.oivheg.resturantbussermaster.fcm;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,9 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
-import com.example.oivheg.resturantbussermaster.MainActivity;
-import com.example.oivheg.resturantbussermaster.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -20,6 +17,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.kdr.oivheg.resturantbussermaster.MainActivity;
+import com.kdr.oivheg.resturantbussermaster.R;
+import com.kdr.oivheg.resturantbussermaster.communication.BusserRestClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -28,15 +28,15 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.example.oivheg.resturantbussermaster.Communication.BusserRestClient.post;
-
 
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "FCMLogin";
-    String MasterKey, ResttName, EMail;
-    SharedPreferences prefs = null;
     TextView infoip, msg;
-    boolean isCreating = false;
+    private String MasterKey;
+    private String ResttName;
+    private String EMail;
+    private SharedPreferences prefs = null;
+    private boolean isCreating = false;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -81,7 +81,6 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     MainActivity.getInstace().ActiveUsers();
 
                     finish();
-                    return;
 
                 } else {
                     // User is signed out
@@ -105,7 +104,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         String tkn = FirebaseInstanceId.getInstance().getToken();
 //        Toast.makeText(FCMLogin.this, "Current token [" + tkn + "]",
 //                Toast.LENGTH_LONG).show();
-        Log.d("Ap:FCM", "Token [" + tkn + "]");
+        Log.d("Ap:fcm", "Token [" + tkn + "]");
         return tkn;
     }
 
@@ -141,7 +140,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
     }
 
-    public void createAccount(String email, String passwd) {
+    private void createAccount(String email, String passwd) {
 
         mAuth.createUserWithEmailAndPassword(email, passwd)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -158,7 +157,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         } else {
                             MasterKey = ResttName.substring(0, 3) + getFCMToken().substring(0, 4);
 
-                            prefs.edit().putString("MasterKey", MasterKey).commit();
+                            prefs.edit().putString("MasterKey", MasterKey).apply();
 
                             MainActivity.getInstace().setMsterKey(MasterKey);
                             CreateMaster(EMail);
@@ -173,8 +172,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private void CreateMaster(String email) {
 
         RequestParams params = new RequestParams();
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
-        prefs.edit().putString("MasterKey", MasterKey).commit();
+        prefs = getSharedPreferences("com.kdr.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs.edit().putString("MasterKey", MasterKey).apply();
 
         //params.put("UserId", 11);
         params.put("Resturant", ResttName);
@@ -187,14 +186,14 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         params.put("Phone", 92627034);
 
 
-        BusserPost("CreateMaster", params, "FCMLOGIN:   Created user usccesessfull push to server    :");
+        BusserPost(params);
     }
 
-    private void BusserPost(String api, RequestParams _params, String message) {
+    private void BusserPost(RequestParams _params) {
 
-        final String _message = message;
+        final String _message = "FCMLOGIN:   Created user usccesessfull push to server    :";
 
-        post(api, _params, new JsonHttpResponseHandler() {
+        BusserRestClient.post("CreateMaster", _params, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                 // Handle resulting parsed JSON response here
@@ -207,7 +206,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     }
 
 
-    public void signIn(String email, String password) {
+    private void signIn(String email, String password) {
         final String final_email = email;
         mAuth.signInWithEmailAndPassword(email, password)
 
@@ -220,12 +219,10 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         RequestParams params = new RequestParams();
                         params.put("Email", final_email);
                         params.put("AppId", getFCMToken());
-                        post("MasterAppId", params, new JsonHttpResponseHandler() {
+                        BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
                             public void onSuccess(int statusCode, Header headers[], JSONObject success) {
                                 // Root JSON in response is an dictionary i.e { "data : [ ... ] }
                                 // Handle resulting parsed JSON response here
-
-                                JSONObject test = success;
 
                                 System.out.println("Active usccesessfull push to server    :" +
 
@@ -250,7 +247,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onStart() {
         super.onStart();
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs = getSharedPreferences("com.kdr.oivhe.resturantbusser", MODE_PRIVATE);
         MasterKey = prefs.getString("MasterKey", null);
         mAuth.addAuthStateListener(mAuthListener);
 

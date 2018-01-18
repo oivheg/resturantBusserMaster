@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster;
+package com.kdr.oivheg.resturantbussermaster;
 
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.Gravity;
@@ -22,12 +23,12 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.example.oivheg.resturantbussermaster.Communication.BusserRestClient;
-import com.example.oivheg.resturantbussermaster.Communication.DBHelper;
-import com.example.oivheg.resturantbussermaster.Content.User;
-import com.example.oivheg.resturantbussermaster.FCM.FCMLogin;
-import com.example.oivheg.resturantbussermaster.FCM.FCMMessageService;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.kdr.oivheg.resturantbussermaster.communication.BusserRestClient;
+import com.kdr.oivheg.resturantbussermaster.communication.DBHelper;
+import com.kdr.oivheg.resturantbussermaster.content.User;
+import com.kdr.oivheg.resturantbussermaster.fcm.FCMLogin;
+import com.kdr.oivheg.resturantbussermaster.fcm.FCMMessageService;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -39,6 +40,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,22 +48,20 @@ import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
-    public static Boolean ASYNCisFInished = false;
+    private static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
     private static MainActivity ins;
-
-    TextView infoip, msg;
-    String MasterKey;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
-    List<String> lst_activeUsers = new ArrayList();
-    // List<String> showUsers = new ArrayList();
-    SharedPreferences prefs = null;
-    int UserCounter = 0;
-    Button btnrefresh, btnnotifyAll;
-    BroadcastReceiver receiver;
-
-    View.OnClickListener refreshListener = new View.OnClickListener() {
+    private final List<String> lst_activeUsers = new ArrayList();
+    private final ArrayList<User> lst_userisactive = new ArrayList<>();
+    //int _ButtonShape = R.drawable.round_button;
+    private final int _backgorundimage = R.drawable.waiter_no;
+    TextView msg;
+    int _ButtonShape = R.drawable.btn_ripple;
+    private TextView infoip;
+    private String MasterKey;
+    private final View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
 
             refreshTable();
@@ -69,9 +69,15 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-    boolean allisnotified = false;
-    boolean wasNotified = false;
-    View.OnClickListener notifyAllListener = new View.OnClickListener() {
+    // List<String> showUsers = new ArrayList();
+    private SharedPreferences prefs = null;
+    private int UserCounter = 0;
+    private Button btnrefresh;
+    private Button btnnotifyAll;
+    private BroadcastReceiver receiver;
+    private boolean allisnotified = false;
+    private boolean wasNotified = false;
+    private final View.OnClickListener notifyAllListener = new View.OnClickListener() {
         public void onClick(View v) {
             if (allisnotified) {
                 btnnotifyAll.clearAnimation();
@@ -90,10 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-    ArrayList<User> lst_userisactive = new ArrayList<>();
-    //int _ButtonShape = R.drawable.round_button;
-    int _backgorundimage = R.drawable.waiter_no;
-    int _ButtonShape = R.drawable.btn_ripple;
     private FCMMessageService myService;
     private boolean bound = false;
 
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        server = new Server(this);
 //        infoip.setText(server.getIpAddress() + ":" + server.getPort());
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs = getSharedPreferences("com.kdr.oivhe.resturantbusser", MODE_PRIVATE);
         //HideStatusBar();
 //        ActiveUsers();
         btnrefresh.setOnClickListener(refreshListener);
@@ -166,9 +168,11 @@ public class MainActivity extends AppCompatActivity {
         params.put("mstrKey", MasterKey);
         if (_CancelDinner) {
             wasNotified = false;
+            btnnotifyAll.setText(getString(R.string.btnNotifAll));
             BusserRestClientPost("CancelDinnerForAll?" + params, null);
             ChangeButtons(false);
         } else {
+            btnnotifyAll.setText("CancelDinner");
             wasNotified = true;
             BusserRestClientPost("DinnerForAll?" + params, null);
             ChangeButtons(true);
@@ -201,14 +205,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
+                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + Arrays.toString(header));
             }
         });
     }
 
-    private void BusserRestClientGet(String apicall, RequestParams params) {
+    private void BusserRestClientGet(RequestParams params) {
 
-        BusserRestClient.get(apicall, params, new JsonHttpResponseHandler() {
+        BusserRestClient.get("GetAllActiveusers/", params, new JsonHttpResponseHandler() {
 
 
             //client1.get(url, new JsonHttpResponseHandler() {
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + header);
+                System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + Arrays.toString(header));
             }
         });
     }
@@ -264,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("Appid", tkn);
         int Master = 1;
 //Gets all active users for this specific Master
-        BusserRestClientGet("GetAllActiveusers/", params);
+        BusserRestClientGet(params);
 
 
         msg.setText(MasterKey);
@@ -278,6 +282,7 @@ public class MainActivity extends AppCompatActivity {
 // Remember that you should never show the action bar if the
 // status bar is hidden, so hide that too if necessary.
         ActionBar actionBar = getActionBar();
+        assert actionBar != null;
         actionBar.hide();
     }
 
@@ -324,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     for (String user : lst_activeUsers) {
 
-                        CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
+                        CircleImageView b = view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
                             CivNotifiedAnimation(b);
@@ -350,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     if (wasNotified) {
-                        CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
+                        CircleImageView b = view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                         b.setPadding(30, 30, 30, 30);
 //                    b.setAlpha(0.4f);
@@ -411,75 +416,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter);
-                final CircleImageView button = new CircleImageView(this);
-                UserCounter++;
-
-//                TableRow.LayoutParams tblParams = new TableRow.LayoutParams(
-//                        TableRow.LayoutParams.MATCH_PARENT,
-//                        190);
-//                tblParams.gravity = Gravity.CENTER;
-                //button.setLayoutParams(tblParams);
-                // tableRow.setOrientation(LinearLayout.VERTICAL);
-
-                //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
-//                button.setLayoutParams(tblParams);
-                button.setImageResource(_backgorundimage);
-                //button.setBackgroundColor(Color.RED);
-                button.setBorderWidth(3);
-                button.setBorderColor(Color.YELLOW);
-                button.setPadding(10, 20, 0, 0);
-                //button.setBackgroundResource(_backgorundimage);
-                //button.setText(FINAL_USER_NAME + " " + row + " " + col);
-                button.setTag(FINAL_USER_NAME.trim());
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (wasNotified) {
-                            ClearButtonAnimation(button);
-                            button.setPadding(0, 10, 0, 0);
-                            button.setBorderColor(Color.YELLOW);
-                            button.setBorderWidth(2);
-//                            return;
-                        } else {
-
-                            CivNotifiedAnimation(button);
-
-
-                        }
-                        gridButtonClicked(FINAL_USER_NAME);
-                    }
-                });
-                LinearLayout LL = new LinearLayout(this);
-
-                TextView tv = new TextView(this);
-
-                tv.setText(FINAL_USER_NAME + " " + row + " " + col);
-                tv.setGravity(Gravity.CENTER);
-                // tv.setLayoutParams(tblParams);
-                LL.setOrientation(LinearLayout.VERTICAL);
-                //LL.setBackgroundColor(Color.BLUE);
-
-
-//                attributLayoutParams.gravity = Gravity.CENTER;
-//
-
-                Display display = getWindowManager().getDefaultDisplay();
-
-                Point size = new Point();
-                display.getSize(size);
-                int ParentWidth = size.x;
-                int ParentHeight = size.y;
-                ParentWidth = ParentWidth / 3;
-                ParentHeight = ParentHeight / 3;
-
-                LL.setLayoutParams(new TableRow.LayoutParams(
-                        ParentWidth - 40,
-                        ParentHeight - 45));
-                // LL.setGravity(Gravity.CENTER);
-                // LL.setBackgroundColor(Color.GREEN);
-                LL.setEnabled(false);
-                LL.addView(button);
-                LL.addView(tv);
+                final CircleImageView button = CreateUserButton(FINAL_USER_NAME);
+                LinearLayout LL = AddToLayout(row, col, FINAL_USER_NAME, button);
 
                 tableRow.addView(LL);
 
@@ -487,6 +425,85 @@ public class MainActivity extends AppCompatActivity {
         }
 
         RestoreUsers();
+    }
+
+    @NonNull
+    private LinearLayout AddToLayout(int row, int col, String FINAL_USER_NAME, CircleImageView button) {
+        LinearLayout LL = new LinearLayout(this);
+
+        TextView tv = new TextView(this);
+
+        tv.setText(FINAL_USER_NAME + " " + row + " " + col);
+        tv.setGravity(Gravity.CENTER);
+        // tv.setLayoutParams(tblParams);
+        LL.setOrientation(LinearLayout.VERTICAL);
+        //LL.setBackgroundColor(Color.BLUE);
+
+
+//                attributLayoutParams.gravity = Gravity.CENTER;
+//
+
+        Display display = getWindowManager().getDefaultDisplay();
+
+        Point size = new Point();
+        display.getSize(size);
+        int ParentWidth = size.x;
+        int ParentHeight = size.y;
+        ParentWidth = ParentWidth / 3;
+        ParentHeight = ParentHeight / 3;
+
+        LL.setLayoutParams(new TableRow.LayoutParams(
+                ParentWidth - 40,
+                ParentHeight - 45));
+        // LL.setGravity(Gravity.CENTER);
+        // LL.setBackgroundColor(Color.GREEN);
+        LL.setEnabled(false);
+        LL.addView(button);
+        LL.addView(tv);
+        return LL;
+    }
+
+    @NonNull
+    private CircleImageView CreateUserButton(final String FINAL_USER_NAME) {
+        final CircleImageView button = new CircleImageView(this);
+        UserCounter++;
+
+//                TableRow.LayoutParams tblParams = new TableRow.LayoutParams(
+//                        TableRow.LayoutParams.MATCH_PARENT,
+//                        190);
+//                tblParams.gravity = Gravity.CENTER;
+        //button.setLayoutParams(tblParams);
+        // tableRow.setOrientation(LinearLayout.VERTICAL);
+
+        //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
+//                button.setLayoutParams(tblParams);
+        button.setImageResource(_backgorundimage);
+        //button.setBackgroundColor(Color.RED);
+        button.setBorderWidth(3);
+        button.setBorderColor(Color.YELLOW);
+        button.setPadding(10, 20, 0, 0);
+        //button.setBackgroundResource(_backgorundimage);
+        //button.setText(FINAL_USER_NAME + " " + row + " " + col);
+        button.setTag(FINAL_USER_NAME.trim());
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (wasNotified) {
+                    ClearButtonAnimation(button);
+                    button.setPadding(0, 10, 0, 0);
+                    button.setBorderColor(Color.YELLOW);
+                    button.setBorderWidth(2);
+//                            return;
+                } else {
+
+                    CivNotifiedAnimation(button);
+
+
+                }
+                gridButtonClicked(FINAL_USER_NAME);
+            }
+        });
+        return button;
     }
 
     private void ClearButtonAnimation(CircleImageView button) {
@@ -506,7 +523,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         try {
-                            Button b = (Button) view.findViewWithTag(user.Name.trim());
+                            Button b = view.findViewWithTag(user.Name.trim());
                             b.setBackgroundColor(Color.GREEN);
                         } catch (Exception e) {
                             System.out.println("MAIN: RestoreUSers ERROR Set Button bacground failed  " + e);
@@ -535,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
         button.setBackgroundColor(Color.rgb(255, 165, 0));
     }
 
-    public void gridButtonClicked(String name) {
+    private void gridButtonClicked(String name) {
         //Toast message for buttons
 //        Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
         if (wasNotified) {
@@ -558,7 +575,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("DinnerisReady", params);
             wasNotified = true;
-            User User = new User(name, wasNotified);
+            User User = new User(name, true);
             lst_userisactive.add(User);
         }
 
@@ -572,7 +589,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (receiver != null)
                 unregisterReceiver(receiver);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
@@ -582,7 +599,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // this is going to be removed, as everything will be handled my appID and response will come from api
-        prefs = getSharedPreferences("com.example.oivhe.resturantbusser", MODE_PRIVATE);
+        prefs = getSharedPreferences("com.kdr.oivhe.resturantbusser", MODE_PRIVATE);
         MasterKey = prefs.getString("MasterKey", null);
         MainActivity.getInstace().setMsterKey(MasterKey);
 

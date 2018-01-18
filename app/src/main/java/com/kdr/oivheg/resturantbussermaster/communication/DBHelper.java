@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster.Communication;
+package com.kdr.oivheg.resturantbussermaster.communication;
 
 import android.os.StrictMode;
 import android.util.Log;
@@ -17,7 +17,7 @@ public class DBHelper {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Connection connection = null;
-        String ConnectionURL = null;
+        String ConnectionURL;
         String pcLocal = "10.0.0.135:1433";
         String Ipserver = "91.192.221.155:1433";
         String server, database, user, password;

@@ -1,4 +1,4 @@
-package com.example.oivheg.resturantbussermaster.Communication;
+package com.kdr.oivheg.resturantbussermaster.communication;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -10,12 +10,10 @@ import com.loopj.android.http.RequestParams;
 
 
 public class BusserRestClient {
-    static String pcLocal = "http://10.0.0.159:51080/api/UserAPI/";
-
-    static String Server = "http://91.189.171.231/restbusserv/api/UserAPI/";
+    private static final String Server = "http://91.189.171.231/restbusserv/api/UserAPI/";
     private static final String BASE_URL = Server;
-    private static AsyncHttpClient client = new AsyncHttpClient();
-
+    private static final AsyncHttpClient client = new AsyncHttpClient();
+    static String pcLocal = "http://10.0.0.159:51080/api/UserAPI/";
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);

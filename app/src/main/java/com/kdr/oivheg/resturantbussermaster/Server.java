@@ -1,7 +1,6 @@
-package com.example.oivheg.resturantbussermaster;
+package com.kdr.oivheg.resturantbussermaster;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -12,11 +11,11 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class Server {
-    MainActivity activity;
+class Server {
+    private static final int socketServerPORT = 8080;
+    private final MainActivity activity;
     private ServerSocket serverSocket;
-    String message = "";
-    static final int socketServerPORT = 8080;
+    private String message = "";
 
     public Server(MainActivity activity) {
         this.activity = activity;
@@ -37,6 +36,34 @@ public class Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String getIpAddress() {
+        StringBuilder ip = new StringBuilder();
+        try {
+            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
+                    .getNetworkInterfaces();
+            while (enumNetworkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = enumNetworkInterfaces
+                        .nextElement();
+                Enumeration<InetAddress> enumInetAddress = networkInterface
+                        .getInetAddresses();
+                while (enumInetAddress.hasMoreElements()) {
+                    InetAddress inetAddress = enumInetAddress
+                            .nextElement();
+
+                    if (inetAddress.isSiteLocalAddress()) {
+                        ip.append("Server running at : ").append(inetAddress.getHostAddress());
+                    }
+                }
+            }
+
+        } catch (SocketException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            ip.append("Something Wrong! ").append(e.toString()).append("\n");
+        }
+        return ip.toString();
     }
 
     private class SocketServerThread extends Thread {
@@ -86,8 +113,8 @@ public class Server {
 
     private class SocketServerReplyThread extends Thread {
 
-        private Socket hostThreadSocket;
-        int cnt;
+        final int cnt;
+        private final Socket hostThreadSocket;
 
         SocketServerReplyThread(Socket socket, int c) {
             hostThreadSocket = socket;
@@ -127,40 +154,11 @@ public class Server {
                 @Override
                 public void run() {
 
-                   
+
                     activity.msg.setText(message);
                 }
             });
         }
 
-    }
-
-    public String getIpAddress() {
-        String ip = "";
-        try {
-            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
-            while (enumNetworkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = enumNetworkInterfaces
-                        .nextElement();
-                Enumeration<InetAddress> enumInetAddress = networkInterface
-                        .getInetAddresses();
-                while (enumInetAddress.hasMoreElements()) {
-                    InetAddress inetAddress = enumInetAddress
-                            .nextElement();
-
-                    if (inetAddress.isSiteLocalAddress()) {
-                        ip += "Server running at : "
-                                + inetAddress.getHostAddress();
-                    }
-                }
-            }
-
-        } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
-        }
-        return ip;
     }
 }
