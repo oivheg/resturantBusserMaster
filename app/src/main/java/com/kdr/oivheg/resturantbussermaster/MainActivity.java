@@ -78,10 +78,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean allisnotified = false;
     private boolean wasNotified = false;
     private final View.OnClickListener notifyAllListener = new View.OnClickListener() {
+
         public void onClick(View v) {
             if (allisnotified) {
                 btnnotifyAll.clearAnimation();
-                btnnotifyAll.setBackgroundColor(Color.GREEN);
+                btnnotifyAll.setBackgroundColor(Color.parseColor("#0000ff"));
                 NotifyAllUsers(true);
                 allisnotified = false;
                 NotifyAllUsers(true);
@@ -354,17 +355,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    CircleImageView b = view.findViewWithTag(user.trim());
+                    //  String clickedFlag  = b.getTag(R.string.BtnClicked).toString();
+                    wasNotified = true;
                     if (wasNotified) {
-                        CircleImageView b = view.findViewWithTag(user.trim());
+
 //                    b.setText("Melding Motatt");
-                        b.setPadding(30, 30, 30, 30);
+                        //b.setPadding(30, 30, 30, 30);
 //                    b.setAlpha(0.4f);
 //                    b.setBackgroundResource(0);
                         // b.setBackgroundColor(Color.GREEN);
                         //b.setImageResource(_backgorundimage);
                         //  b.setBackgroundResource(_backgorundimage);
                         b.clearAnimation();
-                        b.setBorderWidth(10);
+                        b.setBorderWidth(60);
                         b.setBorderColor(Color.GREEN);
                     } else {
 
@@ -384,23 +388,25 @@ public class MainActivity extends AppCompatActivity {
     private void PopulateTable() {
 
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
+        //  table.setPadding(0,10,0,0);
         table.removeAllViews();
 
-        //table.setBackgroundColor(Color.GREEN);
+        table.setBackgroundColor(Color.GREEN);
         //table.setLayoutParams(lp);
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
-//            tableRow.setBackgroundColor(Color.RED);
-//            tableRow.setGravity(Gravity.CENTER_HORIZONTAL);
-//            TableRow.LayoutParams lp = new TableRow.LayoutParams(
-//                    TableRow.LayoutParams.MATCH_PARENT,
-//                    200
-//            );
-//            lp.setMargins(10,10,10,10);
-//            lp.rightMargin = 10;
-            //tableRow.setLayoutParams(lp);
-//tableRow.setBackgroundColor(Color.YELLOW);
+            tableRow.setBackgroundColor(Color.RED);
+//           tableRow.setGravity(Gravity.CENTER_HORIZONTAL);
+            TableLayout.LayoutParams lp = new TableLayout.LayoutParams(
+                    TableLayout.LayoutParams.MATCH_PARENT,
+                    TableLayout.LayoutParams.MATCH_PARENT, 1.0F
+            );
+////            lp.setMargins(10,10,10,10);
+////            lp.rightMargin = 10;
+            tableRow.setLayoutParams(lp);
+            tableRow.setEnabled(false);
+            tableRow.setBackgroundColor(Color.YELLOW);
 //tableRow.setPadding(10,10,10,10);
 
 
@@ -437,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setGravity(Gravity.CENTER);
         // tv.setLayoutParams(tblParams);
         LL.setOrientation(LinearLayout.VERTICAL);
-        //LL.setBackgroundColor(Color.BLUE);
+        // LL.setBackgroundColor(Color.BLUE);
 
 
 //                attributLayoutParams.gravity = Gravity.CENTER;
@@ -453,13 +459,14 @@ public class MainActivity extends AppCompatActivity {
         ParentHeight = ParentHeight / 3;
 
         LL.setLayoutParams(new TableRow.LayoutParams(
-                ParentWidth - 40,
-                ParentHeight - 45));
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.MATCH_PARENT, 1.0F));
         // LL.setGravity(Gravity.CENTER);
-        // LL.setBackgroundColor(Color.GREEN);
+
         LL.setEnabled(false);
         LL.addView(button);
         LL.addView(tv);
+
         return LL;
     }
 
@@ -468,39 +475,51 @@ public class MainActivity extends AppCompatActivity {
         final CircleImageView button = new CircleImageView(this);
         UserCounter++;
 
-//                TableRow.LayoutParams tblParams = new TableRow.LayoutParams(
-//                        TableRow.LayoutParams.MATCH_PARENT,
-//                        190);
-//                tblParams.gravity = Gravity.CENTER;
-        //button.setLayoutParams(tblParams);
+        LinearLayout.LayoutParams tblParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT, 1.0F);
+
+
+        button.setLayoutParams(tblParams);
         // tableRow.setOrientation(LinearLayout.VERTICAL);
 
         //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
 //                button.setLayoutParams(tblParams);
         button.setImageResource(_backgorundimage);
-        //button.setBackgroundColor(Color.RED);
+        // button.setBackgroundColor(Color.RED);
         button.setBorderWidth(3);
+        button.setFocusableInTouchMode(false);
         button.setBorderColor(Color.YELLOW);
-        button.setPadding(10, 20, 0, 0);
+        button.setPadding(10, 0, 0, 0);
         //button.setBackgroundResource(_backgorundimage);
         //button.setText(FINAL_USER_NAME + " " + row + " " + col);
         button.setTag(FINAL_USER_NAME.trim());
+        button.setFocusableInTouchMode(false);
+        // button.setTag(R.string.BtnClicked,"true");
+        //button.setDefaultFocusHighlightEnabled(false);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Boolean btnClicked = false;
+                //String clickedFlag  = button.getTag(R.string.BtnClicked).toString();
                 if (wasNotified) {
+                    btnClicked = true;
+                }
+                if (btnClicked) {
                     ClearButtonAnimation(button);
-                    button.setPadding(0, 10, 0, 0);
+                    button.setTag(R.string.BtnClicked, false);
+                    button.setPadding(0, 0, 0, 0);
                     button.setBorderColor(Color.YELLOW);
                     button.setBorderWidth(2);
+                    //  button.setfoc(false);
 //                            return;
                 } else {
 
                     CivNotifiedAnimation(button);
-
+                    //button.setTag(R.string.BtnClicked, true);
 
                 }
-                gridButtonClicked(FINAL_USER_NAME);
+                gridButtonClicked(wasNotified, FINAL_USER_NAME);
             }
         });
         return button;
@@ -552,10 +571,10 @@ public class MainActivity extends AppCompatActivity {
         button.setBackgroundColor(Color.rgb(255, 165, 0));
     }
 
-    private void gridButtonClicked(String name) {
+    private void gridButtonClicked(boolean ClikedTag, String name) {
         //Toast message for buttons
 //        Toast.makeText(this, name + "  Was Clicked", Toast.LENGTH_SHORT).show();
-        if (wasNotified) {
+        if (ClikedTag) {
 
             RequestParams params = new RequestParams();
             params.put("UserName", name.trim());

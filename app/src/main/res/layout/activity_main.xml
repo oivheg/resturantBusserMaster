@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -12,82 +12,75 @@
 
     tools:context=".MainActivity">
 
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="5dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.11"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="20dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/infoip"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.11"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="20dp">
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="77dp"
 
-                <TextView
-                    android:id="@+id/infoip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="77dp"
+                android:text="MasterKey" />
 
-                    android:text="MasterKey" />
-
-                <TextView
-                    android:id="@+id/msg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Message" />
-
-            </LinearLayout>
-
-
-            <Button
-                android:id="@+id/btnnotifyAll"
+            <TextView
+                android:id="@+id/msg"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:background="@color/wallet_link_text_light"
-                android:text="@string/btnNotifAll" />
-
-            <Button
-                android:id="@+id/btnrefresh"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.11"
-                android:background="@color/cast_intro_overlay_button_background_color"
-                android:text="Refresh" />
-
+                android:layout_height="wrap_content"
+                android:text="Message" />
 
         </LinearLayout>
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/btnnotifyAll"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="#0000ff"
+            android:text="@string/btnNotifAll" />
 
-                android:orientation="vertical">
+        <Button
+            android:id="@+id/btnrefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.11"
+            android:background="@color/cast_intro_overlay_button_background_color"
+            android:text="Refresh" />
 
-                <TableLayout
-
-                    android:id="@+id/tableForClients"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-
-                </TableLayout>
-            </LinearLayout>
-        </ScrollView>
 
     </LinearLayout>
 
-</RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <TableLayout
+
+            android:id="@+id/tableForClients"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        </TableLayout>
+
+    </ScrollView>
+
+    </LinearLayout>
+

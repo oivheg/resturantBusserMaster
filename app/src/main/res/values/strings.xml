@@ -2,4 +2,6 @@
     <string name="app_name">KDRS Master</string>
     <string name="title_activity_fcmlogin">FCMLogin</string>
     <string name="btnNotifAll">Call All Users</string>
+    <string name="User" />
+    <string name="BtnClicked" />
 </resources>
