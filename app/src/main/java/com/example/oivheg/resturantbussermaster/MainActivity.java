@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -321,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     for (String user : lst_activeUsers) {
+
                         CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
@@ -346,17 +349,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
+                    if (wasNotified) {
+                        CircleImageView b = (CircleImageView) view.findViewWithTag(user.trim());
 //                    b.setText("Melding Motatt");
-                    b.setPadding(30, 30, 30, 30);
+                        b.setPadding(30, 30, 30, 30);
 //                    b.setAlpha(0.4f);
 //                    b.setBackgroundResource(0);
-                    // b.setBackgroundColor(Color.GREEN);
-                    //b.setImageResource(_backgorundimage);
-                    //  b.setBackgroundResource(_backgorundimage);
-                    b.clearAnimation();
-                    b.setBorderWidth(10);
-                    b.setBorderColor(Color.GREEN);
+                        // b.setBackgroundColor(Color.GREEN);
+                        //b.setImageResource(_backgorundimage);
+                        //  b.setBackgroundResource(_backgorundimage);
+                        b.clearAnimation();
+                        b.setBorderWidth(10);
+                        b.setBorderColor(Color.GREEN);
+                    } else {
+
+                    }
+
                 } catch (Exception e) {
                     System.out.println("MAIN: ERROR Could not StopBlink" + e);
                 }
@@ -372,6 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
         TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
         table.removeAllViews();
+
         //table.setBackgroundColor(Color.GREEN);
         //table.setLayoutParams(lp);
         for (int row = 0; row < NUM_ROWS; row++) {
@@ -405,20 +414,20 @@ public class MainActivity extends AppCompatActivity {
                 final CircleImageView button = new CircleImageView(this);
                 UserCounter++;
 
-                TableRow.LayoutParams tblParams = new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        250, 1.0F);
+//                TableRow.LayoutParams tblParams = new TableRow.LayoutParams(
+//                        TableRow.LayoutParams.MATCH_PARENT,
+//                        190);
 //                tblParams.gravity = Gravity.CENTER;
                 //button.setLayoutParams(tblParams);
                 // tableRow.setOrientation(LinearLayout.VERTICAL);
 
                 //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
-
+//                button.setLayoutParams(tblParams);
                 button.setImageResource(_backgorundimage);
                 //button.setBackgroundColor(Color.RED);
                 button.setBorderWidth(3);
                 button.setBorderColor(Color.YELLOW);
-                button.setPadding(10, 0, 0, 0);
+                button.setPadding(10, 20, 0, 0);
                 //button.setBackgroundResource(_backgorundimage);
                 //button.setText(FINAL_USER_NAME + " " + row + " " + col);
                 button.setTag(FINAL_USER_NAME.trim());
@@ -427,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (wasNotified) {
                             ClearButtonAnimation(button);
-                            button.setPadding(0, 0, 0, 0);
+                            button.setPadding(0, 10, 0, 0);
                             button.setBorderColor(Color.YELLOW);
                             button.setBorderWidth(2);
 //                            return;
@@ -454,13 +463,21 @@ public class MainActivity extends AppCompatActivity {
 //                attributLayoutParams.gravity = Gravity.CENTER;
 //
 
+                Display display = getWindowManager().getDefaultDisplay();
+
+                Point size = new Point();
+                display.getSize(size);
+                int ParentWidth = size.x;
+                int ParentHeight = size.y;
+                ParentWidth = ParentWidth / 3;
+                ParentHeight = ParentHeight / 3;
 
                 LL.setLayoutParams(new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.MATCH_PARENT, 1.0F));
+                        ParentWidth - 40,
+                        ParentHeight - 45));
                 // LL.setGravity(Gravity.CENTER);
-
-
+                // LL.setBackgroundColor(Color.GREEN);
+                LL.setEnabled(false);
                 LL.addView(button);
                 LL.addView(tv);
 
