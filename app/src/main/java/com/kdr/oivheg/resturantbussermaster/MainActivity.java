@@ -53,10 +53,11 @@ public class MainActivity extends AppCompatActivity {
     private static int NUM_COL = 0;
     private static MainActivity ins;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
-    private final List<String> lst_activeUsers = new ArrayList();
+    private final List<String[]> lst_activeUsers = new ArrayList();
     private final ArrayList<User> lst_userisactive = new ArrayList<>();
     //int _ButtonShape = R.drawable.round_button;
     private final int _backgorundimage = R.drawable.waiter_no;
+    List<String> btnstateList = new ArrayList<String>();
     TextView msg;
     int _ButtonShape = R.drawable.btn_ripple;
     private TextView infoip;
@@ -311,11 +312,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // adds user to the table, as well as setting columns and rows based on user.
+
     public void addUser(String name) {
         NUM_ROWS = 1;
         NUM_COL = 0;
         UserCounter = 0;
-        lst_activeUsers.add(name);
+
+        String[] lstbtnInfo = {name, "test2"};
+        lst_activeUsers.add(lstbtnInfo);
 //        FindUsers();
 //        PopulateTable();
     }
@@ -328,9 +332,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    for (String user : lst_activeUsers) {
+                    for (String[] user : lst_activeUsers) {
 
-                        CircleImageView b = view.findViewWithTag(user.trim());
+                        CircleImageView b = view.findViewWithTag(user[0].trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
                             CivNotifiedAnimation(b);
@@ -349,6 +353,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public void StopbtnBlink(final String user) {
         final View view = this.findViewById(R.id.activity_main);
         runOnUiThread(new Runnable() {
@@ -356,9 +361,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     CircleImageView b = view.findViewWithTag(user.trim());
-                    //  String clickedFlag  = b.getTag(R.string.BtnClicked).toString();
-                    wasNotified = true;
-                    if (wasNotified) {
+
+                    Object clickedFlag = b.getTag(R.string.BtnClicked);
+                    Boolean tmp_wasNotified = IsButtonAlreadyClicked(b);
+
+
+                    if (tmp_wasNotified) {
 
 //                    b.setText("Melding Motatt");
                         //b.setPadding(30, 30, 30, 30);
@@ -421,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
                 if (UserCounter >= lst_activeUsers.size()) {
                     break;
                 }
-                final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter);
+                final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter)[0]; //this adds the username to the texbox under the image.
                 final CircleImageView button = CreateUserButton(FINAL_USER_NAME);
                 LinearLayout LL = AddToLayout(row, col, FINAL_USER_NAME, button);
 
@@ -439,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv = new TextView(this);
 
-        tv.setText(FINAL_USER_NAME + " " + row + " " + col);
+        tv.setText(FINAL_USER_NAME); // this adds the USername to the textfield under image
         tv.setGravity(Gravity.CENTER);
         // tv.setLayoutParams(tblParams);
         LL.setOrientation(LinearLayout.VERTICAL);
@@ -490,6 +498,7 @@ public class MainActivity extends AppCompatActivity {
         button.setBorderWidth(3);
         button.setFocusableInTouchMode(false);
         button.setBorderColor(Color.YELLOW);
+        //button.setId("test");
         button.setPadding(10, 0, 0, 0);
         //button.setBackgroundResource(_backgorundimage);
         //button.setText(FINAL_USER_NAME + " " + row + " " + col);
@@ -501,28 +510,53 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Boolean btnClicked = false;
+                btnClicked = IsButtonAlreadyClicked(button);
+
                 //String clickedFlag  = button.getTag(R.string.BtnClicked).toString();
-                if (wasNotified) {
-                    btnClicked = true;
-                }
+
                 if (btnClicked) {
+                    ChagenBTNList(button, "false");
                     ClearButtonAnimation(button);
-                    button.setTag(R.string.BtnClicked, false);
+                    //button.setTag(R.string.BtnClicked, false);
                     button.setPadding(0, 0, 0, 0);
                     button.setBorderColor(Color.YELLOW);
                     button.setBorderWidth(2);
                     //  button.setfoc(false);
 //                            return;
                 } else {
-
+                    ChagenBTNList(button, "true");
                     CivNotifiedAnimation(button);
                     //button.setTag(R.string.BtnClicked, true);
 
                 }
-                gridButtonClicked(wasNotified, FINAL_USER_NAME);
+                gridButtonClicked(btnClicked, FINAL_USER_NAME);
             }
         });
         return button;
+    }
+
+    private Boolean IsButtonAlreadyClicked(CircleImageView button) {
+        for (String[] user : lst_activeUsers) {
+
+            if (button.getTag() == user[0].trim() && user[1] == "true") {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void ChagenBTNList(CircleImageView button, String value) {
+        int lst_counter = 0;
+        for (String[] user : lst_activeUsers) {
+            String btnnameTag = button.getTag().toString().trim();
+            String LstUserTag = user[0].trim();
+
+            if (btnnameTag.equals(LstUserTag)) {
+                String[] btnInfo = {button.getTag().toString(), value};
+                lst_activeUsers.set(lst_counter, btnInfo);
+            }
+            lst_counter++;
+        }
     }
 
     private void ClearButtonAnimation(CircleImageView button) {
