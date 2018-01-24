@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             if (allisnotified) {
                 btnnotifyAll.clearAnimation();
                 btnnotifyAll.setBackgroundColor(Color.parseColor("#0000ff"));
-                NotifyAllUsers(true);
+
                 allisnotified = false;
                 NotifyAllUsers(true);
                 refreshTable();
@@ -170,14 +169,17 @@ public class MainActivity extends AppCompatActivity {
         params.put("mstrKey", MasterKey);
         if (_CancelDinner) {
             wasNotified = false;
+            ChangeButtons(false);
             btnnotifyAll.setText(getString(R.string.btnNotifAll));
             BusserRestClientPost("CancelDinnerForAll?" + params, null);
-            ChangeButtons(false);
+
         } else {
             btnnotifyAll.setText("CancelDinner");
             wasNotified = true;
-            BusserRestClientPost("DinnerForAll?" + params, null);
             ChangeButtons(true);
+
+            BusserRestClientPost("DinnerForAll?" + params, null);
+
         }
     }
 
@@ -332,16 +334,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    int i = 0;
                     for (String[] user : lst_activeUsers) {
 
                         CircleImageView b = view.findViewWithTag(user[0].trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
                             CivNotifiedAnimation(b);
+                            String[] button = {user[0], "true"};
+                            lst_activeUsers.set(i, button);
                         } else {
                             b.clearAnimation();
+                            String[] button = {user[0], "false"};
+                            lst_activeUsers.set(i, button);
 
                         }
+                        i++;
                     }
                 } catch (Exception e) {
                     System.out.println("MAIN: ERROR Could not StopBlink" + e);
@@ -412,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
             );
 ////            lp.setMargins(10,10,10,10);
 ////            lp.rightMargin = 10;
+            tableRow.setWeightSum(3);
             tableRow.setLayoutParams(lp);
             tableRow.setEnabled(false);
             tableRow.setBackgroundColor(Color.YELLOW);
@@ -459,15 +468,15 @@ public class MainActivity extends AppCompatActivity {
 
         Display display = getWindowManager().getDefaultDisplay();
 
-        Point size = new Point();
-        display.getSize(size);
-        int ParentWidth = size.x;
-        int ParentHeight = size.y;
-        ParentWidth = ParentWidth / 3;
-        ParentHeight = ParentHeight / 3;
+//        Point size = new Point();
+//        display.getSize(size);
+//        int ParentWidth = size.x;
+//        int ParentHeight = size.y;
+//        ParentWidth = ParentWidth / 3;
+//        ParentHeight = ParentHeight / 3;
 
         LL.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
+                0, // width to 0, makes the setWeightSum og the TableRow work properly. so that each "columnd" inside the row, takes equal space, even if one is removed.
                 TableRow.LayoutParams.MATCH_PARENT, 1.0F));
         // LL.setGravity(Gravity.CENTER);
 
@@ -537,8 +546,10 @@ public class MainActivity extends AppCompatActivity {
 
     private Boolean IsButtonAlreadyClicked(CircleImageView button) {
         for (String[] user : lst_activeUsers) {
-
-            if (button.getTag() == user[0].trim() && user[1] == "true") {
+            String btnnameTag = button.getTag().toString().trim();
+            String LstbtnNameTag = user[0].trim();
+            String LstbtnState = user[1].trim();
+            if (btnnameTag.equals(LstbtnNameTag) && LstbtnState.equals("true")) {
                 return true;
             }
         }
