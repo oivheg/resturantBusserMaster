@@ -1,12 +1,15 @@
 package com.kdr.oivheg.resturantbussermaster;
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,23 +50,21 @@ import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
-    private static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
     private static MainActivity ins;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     private final List<String[]> lst_activeUsers = new ArrayList();
     private final ArrayList<User> lst_userisactive = new ArrayList<>();
-    //int _ButtonShape = R.drawable.round_button;
-    private final int _backgorundimage = R.drawable.waiter_no;
     List<String> btnstateList = new ArrayList<String>();
+    ProgressDialog progressDialog;
     TextView msg;
     int _ButtonShape = R.drawable.btn_ripple;
-    private TextView infoip;
+    int RetryNetwork = 0;
     private String MasterKey;
     private final View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
-
+            ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
             refreshTable();
 
 
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     // List<String> showUsers = new ArrayList();
     private SharedPreferences prefs = null;
     private int UserCounter = 0;
-    private Button btnrefresh;
     private Button btnnotifyAll;
     private BroadcastReceiver receiver;
     private boolean allisnotified = false;
@@ -132,7 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        if (!HasNetwork()) {
+            ProgressBar("No Network", "Lukk appen, sjekk nettverk og prøv igjen", false);
+        }
         super.onCreate(savedInstanceState);
         ins = this;
         IntentFilter intentFilter = new IntentFilter();
@@ -146,10 +148,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        btnrefresh = (Button) findViewById(R.id.btnrefresh);
+        Button btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
 
-        infoip = (TextView) findViewById(R.id.infoip);
+        TextView infoip = (TextView) findViewById(R.id.infoip);
         msg = (TextView) findViewById(R.id.msg);
 
 //        server = new Server(this);
@@ -159,6 +161,22 @@ public class MainActivity extends AppCompatActivity {
 //        ActiveUsers();
         btnrefresh.setOnClickListener(refreshListener);
         btnnotifyAll.setOnClickListener(notifyAllListener);
+
+        ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
+
+        //refreshTable();
+
+    }
+
+    private void ProgressBar(String title, String message, boolean isCancable) {
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage(message); // Setting Message
+        progressDialog.setTitle(title); // Setting Title
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // Progress Dialog Style Spinner
+        progressDialog.show();
+        // Display Progress Dialog
+        progressDialog.setCancelable(isCancable);
+
 
     }
 
@@ -174,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             BusserRestClientPost("CancelDinnerForAll?" + params, null);
 
         } else {
-            btnnotifyAll.setText("CancelDinner");
+            btnnotifyAll.setText(R.string.cancelDinner);
             wasNotified = true;
             ChangeButtons(true);
 
@@ -184,6 +202,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void BusserRestClientPost(String apicall, RequestParams params) {
+
+        if (!HasNetwork()) {
+            ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
+            return;
+        }
         BusserRestClient.post(apicall, params, new JsonHttpResponseHandler() {
             //client1.get(url, new JsonHttpResponseHandler() {
             @Override
@@ -214,6 +237,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private boolean HasNetwork() {
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+
     private void BusserRestClientGet(RequestParams params) {
 
         BusserRestClient.get("GetAllActiveusers/", params, new JsonHttpResponseHandler() {
@@ -238,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
 
                 FindUsers();
                 PopulateTable();
+
             }
 
             @Override
@@ -248,20 +283,33 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Active JSON Object repsone    :" +
                         success);
 
-
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(int number, Header[] header, Throwable trh, JSONObject jsonobject) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                progressDialog.dismiss();
                 System.out.print("ERROR" + jsonobject + "  status  " + number + " Header:  " + Arrays.toString(header));
+                ProgressBar("Server ERROR", "har desverre ikke kontat med Serveren, vennligst prøv igjen senere", true);
+
+//                if (RetryNetwork <= 5) {
+//                    RetryNetwork ++;
+//                    Intent i = getBaseContext().getPackageManager()
+//                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+//                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    startActivity(i);
+//                }else {
+//                    RetryNetwork = 0;
+//
+//                }
             }
         });
     }
 
     public void ActiveUsers() {
 
-        ASYNCisFInished = false;
+        Boolean ASYNCisFInished = false;
         lst_activeUsers.clear();
 //        msg.setText("MAIN: Finding Active USERS");
         System.out.println("Main: Started looking for users");
@@ -276,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         msg.setText(MasterKey);
+
     }
 
     private void HideStatusBar() {
@@ -387,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
                         b.setBorderWidth(60);
                         b.setBorderColor(Color.GREEN);
                     } else {
-
+//to prevent code fom runing udner certan conditions
                     }
 
                 } catch (Exception e) {
@@ -448,6 +497,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         RestoreUsers();
+        //progressDialog.hide();
+
+
     }
 
     @NonNull
@@ -502,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
 
         //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
 //                button.setLayoutParams(tblParams);
+        int _backgorundimage = R.drawable.waiter_no;
         button.setImageResource(_backgorundimage);
         // button.setBackgroundColor(Color.RED);
         button.setBorderWidth(3);
@@ -518,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Boolean btnClicked = false;
+                Boolean btnClicked;
                 btnClicked = IsButtonAlreadyClicked(button);
 
                 //String clickedFlag  = button.getTag(R.string.BtnClicked).toString();

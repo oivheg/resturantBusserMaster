@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_create_master_user"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -18,7 +17,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Resturant" />
+        android:text="@string/resturant" />
 
     <EditText
         android:id="@+id/txtEmail"
@@ -26,7 +25,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textEmailAddress"
-        android:text="Email" />
+        android:text="@string/email" />
 
     <EditText
         android:id="@+id/txtphone"
@@ -34,7 +33,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="phone"
-        android:text="Phone" />
+        android:text="@string/phone" />
 
     <EditText
         android:id="@+id/txtOrgNR"
@@ -43,14 +42,13 @@
         android:layout_marginTop="30dp"
         android:ems="10"
         android:inputType="number"
-        android:text="Org" />
+        android:text="@string/org" />
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="Jeg godtar elua avatlen ved å trykke på REGISTRER knappen" />
+        android:text="@string/jeg_godtar_elua_avatlen_ved_trykke_p_registrer_knappen" />
 
     <EditText
         android:id="@+id/txtcontact"
@@ -58,7 +56,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="contact" />
+        android:text="@string/contact" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -72,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="98dp"
-        android:text="Registrer" />
+        android:text="@string/registrer" />
 
     <EditText
         android:id="@+id/txtAnswere"

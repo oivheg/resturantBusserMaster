@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
@@ -26,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Resturant Name"
+                android:hint="@string/resturant_name"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
                 android:nextFocusRight="@+id/field_contact" />
@@ -37,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Contact person"
+                android:hint="@string/contact_person"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
                 android:nextFocusDown="@+id/field_phone" />
@@ -66,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Phone"
+                android:hint="@string/phone"
                 android:imeOptions="actionNext"
                 android:inputType="numberSigned"
                 android:nextFocusRight="@+id/field_OrgNr" />
@@ -77,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="OrgNr"
+                android:hint="@string/orgnr"
                 android:imeOptions="actionNext"
                 android:inputType="number"
                 android:nextFocusDown="@+id/field_EULA" />
@@ -106,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Approve EULA"
+                android:hint="@string/approve_eula"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
                 android:nextFocusRight="@+id/field_MISC" />
@@ -117,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Other info"
+                android:hint="@string/other_info"
                 android:imeOptions="actionNext"
                 android:inputType="textPersonName"
                 android:nextFocusDown="@+id/field_email" />
@@ -146,7 +145,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="epost"
+                android:hint="@string/epost"
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:nextFocusRight="@+id/field_password" />
@@ -156,12 +155,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="password"
+                android:hint="@string/password"
                 android:inputType="textPassword" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/email_password_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/email_password_fields"
@@ -170,13 +168,14 @@
             android:paddingRight="16dp">
 
             <Button
+
                 android:id="@+id/btnlogin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/kdrYellow"
                 android:onClick="onClick"
-                android:text="logg inn" />
+                android:text="@string/logg_inn" />
 
             <Button
                 android:id="@+id/btncreateac"
@@ -185,11 +184,10 @@
                 android:layout_weight="1"
                 android:background="@color/kdrYellow"
                 android:onClick="onClick"
-                android:text="lage konto" />
+                android:text="@string/lage_konto" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/signed_in_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -200,18 +198,16 @@
             android:weightSum="2.0">
 
             <Button
-                android:id="@+id/sign_out_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="Logg ut" />
+                android:text="@string/logg_ut" />
 
             <Button
-                android:id="@+id/verify_email_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:text="Verifiser epost" />
+                android:text="@string/verifiser_epost" />
 
         </LinearLayout>
 

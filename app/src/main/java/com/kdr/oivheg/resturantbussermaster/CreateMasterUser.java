@@ -20,15 +20,9 @@ import java.sql.Statement;
 
 public abstract class CreateMasterUser extends AppCompatActivity {
     String un, pass, db, ip;
-    private TextView Rest;
-    private TextView email;
     private TextView phone;
     private TextView contact;
-    private TextView OrgNr;
-    private TextView txtAnswere;
     private ProgressBar progressBar;
-    //SQL Connection variables
-    private Connection con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +30,12 @@ public abstract class CreateMasterUser extends AppCompatActivity {
         setContentView(R.layout.activity_create_master_user);
 
         Button reg = (Button) findViewById(R.id.btnreg);
-        Rest = (TextView) findViewById(R.id.txtResturant);
+        TextView rest = (TextView) findViewById(R.id.txtResturant);
         phone = (TextView) findViewById(R.id.txtphone);
-        email = (TextView) findViewById(R.id.txtEmail);
+        TextView email = (TextView) findViewById(R.id.txtEmail);
         contact = (TextView) findViewById(R.id.txtcontact);
-        OrgNr = (TextView) findViewById(R.id.txtOrgNR);
-        txtAnswere = (TextView) findViewById(R.id.txtAnswere);
+        TextView orgNr = (TextView) findViewById(R.id.txtOrgNR);
+        TextView txtAnswere = (TextView) findViewById(R.id.txtAnswere);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         progressBar.setVisibility(View.GONE);
@@ -100,10 +94,10 @@ public abstract class CreateMasterUser extends AppCompatActivity {
             } else {
                 try {
                     DBHelper connectDb = new DBHelper();
-                    con = connectDb.connectionclass();
+                    Connection con = connectDb.connectionclass();
                     System.out.println("I am Connected");
                     if (con == null) {
-
+//Connection are null
                     } else {
 
                         // Continue here, trying to show al info from the USERS Table .

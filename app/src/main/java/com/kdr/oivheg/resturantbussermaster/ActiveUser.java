@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -21,15 +20,13 @@ import cz.msebera.android.httpclient.Header;
 
 class ActiveUser {
 
-    private static Boolean ASYNCisFInished = false;
     private static int NUM_ROWS = 1;
     private static int NUM_COL = 0;
-    private final List<String> activeUsers = new ArrayList();
-    private int UserCounter = 0;
+    private final ArrayList activeUsers = new ArrayList();
 
     public void ActiveUsers() {
         NUM_COL = 0;
-        ASYNCisFInished = false;
+        Boolean ASYNCisFInished = false;
         activeUsers.clear();
 
         System.out.println("Main: Started looking for users");
@@ -153,7 +150,7 @@ class ActiveUser {
     private void addUser(String name) {
         NUM_ROWS = 1;
         NUM_COL = 0;
-        UserCounter = 0;
+        int userCounter = 0;
         activeUsers.add(name);
 //        FindUsers();
 //        PopulateTable();
