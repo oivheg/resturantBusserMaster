@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "201683658816",
+    "firebase_url": "https://resturantbussermaster.firebaseio.com",
+    "project_id": "resturantbussermaster",
+    "storage_bucket": "resturantbussermaster.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201683658816:android:ef685a93de105c62",
+        "android_client_info": {
+          "package_name": "com.example.oivheg.resturantbussermaster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201683658816-jguj8ap6g6482rb1u6ee6scoe544sg74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.oivheg.resturantbussermaster",
+            "certificate_hash": "4b482b741286df3d2162719a8f62e630efccb2d8"
+          }
+        },
+        {
+          "client_id": "201683658816-81vcvdqukdosek5k909ebiu8l3t22qmb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.oivheg.resturantbussermaster",
+            "certificate_hash": "261bcac46bd5a4169a844224ab1b859cd2e5a35a"
+          }
+        },
+        {
+          "client_id": "201683658816-3hnmh59i9vv1naugfhhjpjuig40c8m5n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnQTJS2qchFCjAuVU0KqgFobDVGd2K4co"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "201683658816-3hnmh59i9vv1naugfhhjpjuig40c8m5n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201683658816:android:eb02dcd367d510a6",
+        "android_client_info": {
+          "package_name": "com.kdr.oivheg.resturantbussermaster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201683658816-kfrr01eps1itcs9siugj38j7ldor9230.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kdr.oivheg.resturantbussermaster",
+            "certificate_hash": "4b482b741286df3d2162719a8f62e630efccb2d8"
+          }
+        },
+        {
+          "client_id": "201683658816-3hnmh59i9vv1naugfhhjpjuig40c8m5n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnQTJS2qchFCjAuVU0KqgFobDVGd2K4co"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "201683658816-3hnmh59i9vv1naugfhhjpjuig40c8m5n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
