@@ -132,9 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (!HasNetwork()) {
-            ProgressBar("No Network", "Lukk appen, sjekk nettverk og prøv igjen", false);
-        }
+
         super.onCreate(savedInstanceState);
         ins = this;
         IntentFilter intentFilter = new IntentFilter();
@@ -147,6 +145,14 @@ public class MainActivity extends AppCompatActivity {
 //        FirebaseMessaging.getInstance().subscribeToTopic("test");
 
         setContentView(R.layout.activity_main);
+
+        if (!HasNetwork()) {
+            ProgressBar("No Network", "Lukk appen, sjekk nettverk og prøv igjen", false);
+
+
+        } else {
+            ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
+        }
 
         Button btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
@@ -162,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
         btnrefresh.setOnClickListener(refreshListener);
         btnnotifyAll.setOnClickListener(notifyAllListener);
 
-        ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
 
         //refreshTable();
 
