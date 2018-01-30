@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kdr.oivheg.resturantbussermaster.communication.BusserRestClient;
+import com.kdr.oivheg.resturantbussermaster.communication.ConnectionReceiver;
 import com.kdr.oivheg.resturantbussermaster.communication.DBHelper;
 import com.kdr.oivheg.resturantbussermaster.content.User;
 import com.kdr.oivheg.resturantbussermaster.fcm.FCMLogin;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     int _ButtonShape = R.drawable.btn_ripple;
     int RetryNetwork = 0;
     private String MasterKey;
+
     private final View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
             ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+
         if (!HasNetwork()) {
             ProgressBar("No Network", "Lukk appen, sjekk nettverk og prøv igjen", false);
 
@@ -170,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //refreshTable();
+
 
     }
 
@@ -277,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
                 FindUsers();
                 PopulateTable();
-
+                progressDialog.dismiss();
             }
 
             @Override
@@ -288,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Active JSON Object repsone    :" +
                         success);
 
-                progressDialog.dismiss();
+
             }
 
             @Override
@@ -466,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
         for (int row = 0; row < NUM_ROWS; row++) {
 
             TableRow tableRow = new TableRow(this);
-            tableRow.setBackgroundColor(Color.RED);
+            //tableRow.setBackgroundColor(Color.RED);
 //           tableRow.setGravity(Gravity.CENTER_HORIZONTAL);
             TableLayout.LayoutParams lp = new TableLayout.LayoutParams(
                     TableLayout.LayoutParams.MATCH_PARENT,
@@ -477,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
             tableRow.setWeightSum(3);
             tableRow.setLayoutParams(lp);
             tableRow.setEnabled(false);
-            tableRow.setBackgroundColor(Color.YELLOW);
+            //tableRow.setBackgroundColor(Color.YELLOW);
 //tableRow.setPadding(10,10,10,10);
 
 
@@ -728,6 +732,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void checkConnection() {
+        boolean isConnected = ConnectionReceiver.isConnected();
+        if (!isConnected) {
+            //show a No Internet Alert or Dialog
+        }
+    }
 
     private class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
