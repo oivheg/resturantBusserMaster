@@ -2,9 +2,7 @@ package com.kdr.oivheg.resturantbussermaster;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -13,16 +11,14 @@ import android.widget.TextView;
 import com.kdr.oivheg.resturantbussermaster.communication.DBHelper;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public abstract class CreateMasterUser extends AppCompatActivity {
-    String un, pass, db, ip;
-    private TextView phone;
-    private TextView contact;
-    private ProgressBar progressBar;
+    // --Commented out by Inspection (31.01.2018 09.07):String un, // --Commented out by Inspection (31.01.2018 09.07):pass, // --Commented out by Inspection (31.01.2018 09.07):db, // --Commented out by Inspection (31.01.2018 09.07):ip;
+    private static TextView phone;
+    private static TextView contact;
+    private static ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,26 +48,28 @@ public abstract class CreateMasterUser extends AppCompatActivity {
         });
     }
 
-    public Connection connectionclass(String user, String password, String database, String server) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        Connection connection = null;
-        String ConnectionURL;
-        try {
-            //Code for connecting to database
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            ConnectionURL = "jdbc:jtds:sqlserver://" + server + ";"
-                    + "databaseName=" + database + ";user=" + user + ";password=" + password + ";";
-            connection = DriverManager.getConnection(ConnectionURL);
-        } catch (SQLException se) {
-            Log.e("error here 1 :", se.getMessage());
-        } catch (ClassNotFoundException e) {
-            Log.e("Error here 2 :", e.getMessage());
-        } catch (Exception e) {
-            Log.e("Error here 3 :", e.getMessage());
-        }
-        return connection;
-    }
+// --Commented out by Inspection START (31.01.2018 09.07):
+//    public Connection connectionclass(String user, String password, String database, String server) {
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+//        Connection connection = null;
+//        String ConnectionURL;
+//        try {
+//            //Code for connecting to database
+//            Class.forName("net.sourceforge.jtds.jdbc.Driver");
+//            ConnectionURL = "jdbc:jtds:sqlserver://" + server + ";"
+//                    + "databaseName=" + database + ";user=" + user + ";password=" + password + ";";
+//            connection = DriverManager.getConnection(ConnectionURL);
+//        } catch (SQLException se) {
+//            Log.e("error here 1 :", se.getMessage());
+//        } catch (ClassNotFoundException e) {
+//            Log.e("Error here 2 :", e.getMessage());
+//        } catch (Exception e) {
+//            Log.e("Error here 3 :", e.getMessage());
+//        }
+//        return connection;
+//    }
+// --Commented out by Inspection STOP (31.01.2018 09.07)
 
     public class CheckLogin extends AsyncTask<String, String, String> {
 

@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,7 +30,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "FCMLogin";
-    TextView infoip, msg;
+    // --Commented out by Inspection (31.01.2018 09.07):TextView infoip, // --Commented out by Inspection (31.01.2018 09.07):msg;
     private String MasterKey;
     private String ResttName;
     private String EMail;
@@ -65,7 +64,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     params.put("AppId", getFCMToken());
 
                     BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
-                        String Tmp = "Test ";
+                        // --Commented out by Inspection (31.01.2018 09.07):String Tmp = "Test ";
 
                         @Override
                         protected Object parseResponse(byte[] responseBody) throws JSONException {

@@ -45,4 +45,3 @@ public class ConnectionReceiver extends BroadcastReceiver {
         void onNetworkConnectionChanged(boolean isConnected);
     }
 }
-

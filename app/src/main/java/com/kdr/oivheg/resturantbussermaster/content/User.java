@@ -6,7 +6,8 @@ package com.kdr.oivheg.resturantbussermaster.content;
 
 public class User {
     public final String Name;
-    public final boolean isNotified;
+    public boolean isNotified;
+    public boolean isClicked;
 
     public User(String name, boolean isNotified) {
         Name = name;

@@ -1,6 +1,5 @@
 package com.kdr.oivheg.resturantbussermaster;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -28,10 +26,8 @@ import android.widget.TextView;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kdr.oivheg.resturantbussermaster.communication.BusserRestClient;
 import com.kdr.oivheg.resturantbussermaster.communication.ConnectionReceiver;
-import com.kdr.oivheg.resturantbussermaster.communication.DBHelper;
 import com.kdr.oivheg.resturantbussermaster.content.User;
 import com.kdr.oivheg.resturantbussermaster.fcm.FCMLogin;
-import com.kdr.oivheg.resturantbussermaster.fcm.FCMMessageService;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -39,13 +35,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -55,13 +47,14 @@ public class MainActivity extends AppCompatActivity {
     private static int NUM_COL = 0;
     private static MainActivity ins;
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
-    private final List<String[]> lst_activeUsers = new ArrayList();
+    private final ArrayList<User> tmp_userisactive = new ArrayList<>();
     private final ArrayList<User> lst_userisactive = new ArrayList<>();
-    List<String> btnstateList = new ArrayList<String>();
-    ProgressDialog progressDialog;
     TextView msg;
+    CircleImageView GeneralUserButton;
     int _ButtonShape = R.drawable.btn_ripple;
     int RetryNetwork = 0;
+    // --Commented out by Inspection (31.01.2018 09.07):List<String> btnstateList = new ArrayList<String>();
+    private ProgressDialog progressDialog;
     private String MasterKey;
 
     private final View.OnClickListener refreshListener = new View.OnClickListener() {
@@ -99,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-    private FCMMessageService myService;
-    private boolean bound = false;
+
 
     public static MainActivity getInstace() {
         return ins;
@@ -250,11 +242,10 @@ public class MainActivity extends AppCompatActivity {
         ConnectivityManager cm =
                 (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+        NetworkInfo activeNetwork = cm != null ? cm.getActiveNetworkInfo() : null;
 
-        return isConnected;
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 
     private void BusserRestClientGet(RequestParams params) {
@@ -317,9 +308,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ActiveUsers() {
-
+        tmp_userisactive.clear();
         Boolean ASYNCisFInished = false;
-        lst_activeUsers.clear();
+        for (User _tmpUser : lst_userisactive) {
+            boolean tmpstatus = _tmpUser.isClicked;
+            if (tmpstatus) {
+                tmp_userisactive.add(_tmpUser);
+            }
+        }
+
+        lst_userisactive.clear();
 //        msg.setText("MAIN: Finding Active USERS");
         System.out.println("Main: Started looking for users");
 
@@ -336,34 +334,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void HideStatusBar() {
-        View decorView = getWindow().getDecorView();
-// Hide the status bar.
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
-// Remember that you should never show the action bar if the
-// status bar is hidden, so hide that too if necessary.
-        ActionBar actionBar = getActionBar();
-        assert actionBar != null;
-        actionBar.hide();
-    }
+// --Commented out by Inspection START (31.01.2018 09.07):
+//    private void HideStatusBar() {
+//        View decorView = getWindow().getDecorView();
+//// Hide the status bar.
+//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+//        decorView.setSystemUiVisibility(uiOptions);
+//// Remember that you should never show the action bar if the
+//// status bar is hidden, so hide that too if necessary.
+//        ActionBar actionBar = getActionBar();
+//        assert actionBar != null;
+//        actionBar.hide();
+//    }
+// --Commented out by Inspection STOP (31.01.2018 09.07)
 
     // fins each user and sets the sixe of rows and columns
     private void FindUsers() {
 //        NUM_COL = 0;
 
         // error here, that activates when there are more than 3 users,, then there are added an additional row.
-        for (int users = 0; users < lst_activeUsers.size(); users++) {
+        for (int users = 0; users < lst_userisactive.size(); users++) {
 
             if (users >= 3) {
-                double tmp = ((double) lst_activeUsers.size() / 3);
+                double tmp = ((double) lst_userisactive.size() / 3);
                 if (tmp == 0) {
                     tmp = 1;
                 }
                 tmp = Math.ceil(tmp);
                 NUM_ROWS = (int) tmp;
 
-            } else if (lst_activeUsers.size() != 0) {
+            } else if (lst_userisactive.size() != 0) {
                 NUM_COL++;
             }
 
@@ -378,8 +378,10 @@ public class MainActivity extends AppCompatActivity {
         NUM_COL = 0;
         UserCounter = 0;
 
-        String[] lstbtnInfo = {name, "test2"};
-        lst_activeUsers.add(lstbtnInfo);
+//        String[] lstbtnInfo = {name, "test2"};
+        //  lst_activeUsers.add(lstbtnInfo);
+        User tmpUser = new User(name, false);
+        lst_userisactive.add(tmpUser);
 //        FindUsers();
 //        PopulateTable();
     }
@@ -392,22 +394,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    int i = 0;
-                    for (String[] user : lst_activeUsers) {
 
-                        CircleImageView b = view.findViewWithTag(user[0].trim());
+                    for (User usr : lst_userisactive) {
+                        CircleImageView b = view.findViewWithTag(usr.Name.trim());
 //                    b.setText("Melding Motatt");
                         if (_isBlinking) {
-                            CivNotifiedAnimation(b);
-                            String[] button = {user[0], "true"};
-                            lst_activeUsers.set(i, button);
+                            CivButtonStartAnimation(b);
+                            usr.isClicked = true;
+                            //String[] button = {user[0], "true"};
+
+                            //lst_activeUsers.set(i, button);
+                            //gridButtonClicked(true, user.Name );
                         } else {
                             b.clearAnimation();
-                            String[] button = {user[0], "false"};
-                            lst_activeUsers.set(i, button);
-
+                            usr.isClicked = false;
+                            // String[] button = {user[0], "false"};
+                            //lst_activeUsers.set(i, button);
+                            //gridButtonClicked(false, user.Name );
                         }
-                        i++;
+
                     }
                 } catch (Exception e) {
                     System.out.println("MAIN: ERROR Could not StopBlink" + e);
@@ -429,18 +434,15 @@ public class MainActivity extends AppCompatActivity {
                     CircleImageView b = view.findViewWithTag(user.trim());
 
                     Object clickedFlag = b.getTag(R.string.BtnClicked);
-                    Boolean tmp_wasNotified = IsButtonAlreadyClicked(b);
+                    Boolean wasCLicked = IsButtonAlreadyClicked(b);
+                    for (User usr : lst_userisactive) {
+                        if (usr.Name.trim().equals(b.getTag().toString().trim())) {
+                            usr.isNotified = true;
+                        }
+                    }
 
+                    if (wasCLicked) {
 
-                    if (tmp_wasNotified) {
-
-//                    b.setText("Melding Motatt");
-                        //b.setPadding(30, 30, 30, 30);
-//                    b.setAlpha(0.4f);
-//                    b.setBackgroundResource(0);
-                        // b.setBackgroundColor(Color.GREEN);
-                        //b.setImageResource(_backgorundimage);
-                        //  b.setBackgroundResource(_backgorundimage);
                         b.clearAnimation();
                         b.setBorderWidth(60);
                         b.setBorderColor(Color.GREEN);
@@ -465,7 +467,7 @@ public class MainActivity extends AppCompatActivity {
         //  table.setPadding(0,10,0,0);
         table.removeAllViews();
 
-        table.setBackgroundColor(Color.GREEN);
+        // table.setBackgroundColor(Color.GREEN);
         //table.setLayoutParams(lp);
         for (int row = 0; row < NUM_ROWS; row++) {
 
@@ -490,13 +492,29 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 table.addView(tableRow);
             }
+//            Iterator<User> user = lst_userisactive.iterator();
+//
+//            while (user.hasNext()) {
+//                for (int col = 0; col < NUM_COL; col++) {
+//                    if (UserCounter >= lst_userisactive.size()) {
+//                   break;
+//                }
+//                 String FINAL_USER_NAME = user.next().Name  ; //this adds the username to the texbox under the image.
+//                final CircleImageView button = CreateUserButton(FINAL_USER_NAME);
+//               LinearLayout LL = AddToLayout(row, col, FINAL_USER_NAME, button);
+//
+//                tableRow.addView(LL);
+//
+//            }
+//            }
 
 
             for (int col = 0; col < NUM_COL; col++) {
-                if (UserCounter >= lst_activeUsers.size()) {
+
+                if (UserCounter >= lst_userisactive.size()) {
                     break;
                 }
-                final String FINAL_USER_NAME = lst_activeUsers.get(UserCounter)[0]; //this adds the username to the texbox under the image.
+                final String FINAL_USER_NAME = lst_userisactive.get(UserCounter).Name; //this adds the username to the texbox under the image.
                 final CircleImageView button = CreateUserButton(FINAL_USER_NAME);
                 LinearLayout LL = AddToLayout(row, col, FINAL_USER_NAME, button);
 
@@ -586,7 +604,7 @@ public class MainActivity extends AppCompatActivity {
                 //String clickedFlag  = button.getTag(R.string.BtnClicked).toString();
 
                 if (btnClicked) {
-                    ChagenBTNList(button, "false");
+                    ChagenBTNList(button.getTag().toString(), false);
                     ClearButtonAnimation(button);
                     //button.setTag(R.string.BtnClicked, false);
                     button.setPadding(0, 0, 0, 0);
@@ -595,8 +613,7 @@ public class MainActivity extends AppCompatActivity {
                     //  button.setfoc(false);
 //                            return;
                 } else {
-                    ChagenBTNList(button, "true");
-                    CivNotifiedAnimation(button);
+                    ChagenBTNList(button.getTag().toString(), true);
                     //button.setTag(R.string.BtnClicked, true);
 
                 }
@@ -607,28 +624,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Boolean IsButtonAlreadyClicked(CircleImageView button) {
-        for (String[] user : lst_activeUsers) {
-            String btnnameTag = button.getTag().toString().trim();
-            String LstbtnNameTag = user[0].trim();
-            String LstbtnState = user[1].trim();
-            if (btnnameTag.equals(LstbtnNameTag) && LstbtnState.equals("true")) {
-                return true;
+//        for (String[] user : lst_activeUsers) {
+//            String btnnameTag = button.getTag().toString().trim();
+//            String LstbtnNameTag = user[0].trim();
+//            String LstbtnState = user[1].trim();
+//            if (btnnameTag.equals(LstbtnNameTag) && LstbtnState.equals("true")) {
+//                return true;
+//            }
+//        }
+
+        for (User usr : lst_userisactive) {
+            String btnName = button.getTag().toString().trim();
+            if (usr.Name.trim().equals(btnName)) {
+                return usr.isClicked;
             }
         }
         return false;
     }
 
-    private void ChagenBTNList(CircleImageView button, String value) {
+    private void ChagenBTNList(String buttonName, boolean value) {
         int lst_counter = 0;
-        for (String[] user : lst_activeUsers) {
-            String btnnameTag = button.getTag().toString().trim();
-            String LstUserTag = user[0].trim();
+//        for (String[] user : lst_activeUsers) {
+//            String btnnameTag = button.getTag().toString().trim();
+//            String LstUserTag = user[0].trim();
+//
+//            if (btnnameTag.equals(LstUserTag)) {
+//                String[] btnInfo = {button.getTag().toString(), value};
+//                lst_activeUsers.set(lst_counter, btnInfo);
+//            }
+//            lst_counter++;
+//        }
 
-            if (btnnameTag.equals(LstUserTag)) {
-                String[] btnInfo = {button.getTag().toString(), value};
-                lst_activeUsers.set(lst_counter, btnInfo);
+        for (User usr : lst_userisactive) {
+            if (usr.Name.trim().equals(buttonName.trim())) {
+                usr.isClicked = value;
             }
-            lst_counter++;
         }
     }
 
@@ -639,18 +669,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void RestoreUsers() {
-
+        boolean UserisNotified = false;
+        boolean BtnIsClicked = false;
         for (final User user : lst_userisactive) {
+
+            for (User _tmpUser : tmp_userisactive) {
+
+                String lstUsername = user.Name.trim();
+                if (_tmpUser.isClicked && _tmpUser.Name.trim().equals(lstUsername)) {
+                    user.isClicked = _tmpUser.isClicked;
+                    user.isNotified = _tmpUser.isNotified;
+                }
+            }
+            UserisNotified = user.isNotified;
+            BtnIsClicked = user.isClicked;
+
             final View view = this.findViewById(R.id.activity_main);
-            if (user.isNotified) {
+            CircleImageView b = view.findViewWithTag(user.Name.trim());
+//            if (b.getAnimation() != null) {
+//                if (b.getAnimation().hasStarted()) {
+//                    String Temp = "did nothing";
+//                }
+//            }
+            if (BtnIsClicked) {
+                CivButtonStartAnimation(b);
+            }
+
+            if (UserisNotified) {
                 System.out.println("3:Startet refrehsing TABLE");
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            Button b = view.findViewWithTag(user.Name.trim());
-                            b.setBackgroundColor(Color.GREEN);
+                            //GeneralUserButton= view.findViewWithTag(user.Name.trim());
+                            StopbtnBlink(user.Name.trim());
                         } catch (Exception e) {
                             System.out.println("MAIN: RestoreUSers ERROR Set Button bacground failed  " + e);
                         }
@@ -661,9 +714,10 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
     }
 
-    private void CivNotifiedAnimation(CircleImageView button) {
+    private void CivButtonStartAnimation(CircleImageView button) {
         Animation startAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.btnblinking_animation);
 
         button.setBorderWidth(20);
@@ -687,13 +741,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("CancelDinner", params);
             wasNotified = false;
-            Iterator<User> user = lst_userisactive.iterator();
-            while (user.hasNext()) {
-                User usr = user.next();
-                if (usr.Name.equals(name)) {
-                    user.remove();
-                }
-            }
+            FindUser(name);
 
         } else {
             //      creates request paramter with user, so that specific user are notified.
@@ -705,6 +753,16 @@ public class MainActivity extends AppCompatActivity {
             lst_userisactive.add(User);
         }
 
+    }
+
+    private void FindUser(String name) {
+        Iterator<User> user = lst_userisactive.iterator();
+        while (user.hasNext()) {
+            User usr = user.next();
+            if (usr.Name.equals(name)) {
+                user.remove();
+            }
+        }
     }
 
     @Override
@@ -732,12 +790,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // --Commented out by Inspection START (31.01.2018 09.07):
     private void checkConnection() {
         boolean isConnected = ConnectionReceiver.isConnected();
         if (!isConnected) {
             //show a No Internet Alert or Dialog
         }
     }
+// --Commented out by Inspection STOP (31.01.2018 09.07)
 
     private class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
@@ -748,60 +808,62 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Not in Use anymore
-    public class CheckActiveUsers extends AsyncTask<String, String, String> {
-
-        String z = "";
-        Boolean isSuccess = false; // used to check wheter the login fails or not
-        Connection con;
-
-        @Override
-        protected void onPreExecute() {
-
-            // progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-
-            super.onPostExecute(s);
-
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-
-            try {
-                DBHelper connectDb = new DBHelper();
-                con = connectDb.connectionclass();
-                if (con == null) {
-
-                } else {
-
-                    // Continue here, trying to show al info from the USERS Table .
-                    String query = "\n" +
-                            "select * from Users where MasterID = 1 and Active = 'true';";
-
-                    Statement stmt = con.createStatement();
-                    ResultSet rs = stmt.executeQuery(query);
-
-                    while (rs.next()) {
-
-                        String first = rs.getString("UserName");
-                        addUser(first.trim());
-
-
-                    }
-                }
-
-            } catch (Exception ex) {
-                isSuccess = false;
-                z = ex.getMessage();
-            }
-
-            isSuccess = true;
-            return null;
-        }
-    }
+////    // Not in Use anymore
+//    public class CheckActiveUsers extends AsyncTask<String, String, String> {
+//
+//String z = "";
+//   Boolean isSuccess = false; // used to check wheter the login fails or not
+//        Connection con;
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//            // progressBar.setVisibility(View.VISIBLE);
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//
+//            super.onPostExecute(s);
+//
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//
+//
+//            try {
+//                DBHelper connectDb = new DBHelper();
+//                con = connectDb.connectionclass();
+//                if (con == null) {
+//
+//                } else {
+//
+//                    // Continue here, trying to show al info from the USERS Table .
+//                    String query = "\n" +
+//                            "select * from Users where MasterID = 1 and Active = 'true';";
+//
+//                    Statement stmt = con.createStatement();
+//                    ResultSet rs = stmt.executeQuery(query);
+//
+//                    while (rs.next()) {
+//
+//                        String first = rs.getString("UserName");
+//                        addUser(first.trim());
+//
+//
+//
+//                    }
+//                }
+//
+//            } catch (Exception ex) {
+//                isSuccess = false;
+//                z = ex.getMessage();
+//
+//            }
+//
+//            isSuccess = true;
+//            return null;
+//        }
+//    }
 }

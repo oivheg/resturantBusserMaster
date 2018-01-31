@@ -76,7 +76,7 @@ public class FCMMessageService extends FirebaseMessagingService {
 //        Try catch is because this class runs 2 times and crashes the app,  should look for why and might fix
         try {
             _justUpdated = true;
-            MainActivity.getInstace().refreshTable();
+            //MainActivity.getInstace().refreshTable();
             _justUpdated = false;
         } catch (Exception e) {
             System.out.println("FCMMESSAGE: ERROR  " + e);

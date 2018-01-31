@@ -14,16 +14,17 @@ import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by oivhe on 13.02.2017.
- */
-
+///**
+// * Created by oivhe on 13.02.2017.
+// */
+//
 class ActiveUser {
 
+    public static int NUM_COL = 0;
     private static int NUM_ROWS = 1;
-    private static int NUM_COL = 0;
     private final ArrayList activeUsers = new ArrayList();
 
+    // --Commented out by Inspection START (31.01.2018 09.07):
     public void ActiveUsers() {
         NUM_COL = 0;
         Boolean ASYNCisFInished = false;
@@ -41,7 +42,9 @@ class ActiveUser {
 
 
     }
+// --Commented out by Inspection STOP (31.01.2018 09.07)
 
+    // --Commented out by Inspection START (31.01.2018 09.07):
     private void BusserRestClientPost(String apicall, RequestParams params) {
         BusserRestClient.post(apicall, params, new JsonHttpResponseHandler() {
             //client1.get(url, new JsonHttpResponseHandler() {
@@ -72,6 +75,7 @@ class ActiveUser {
             }
         });
     }
+
 
 
     private void BusserRestClientGet(String apicall) {
@@ -131,6 +135,7 @@ class ActiveUser {
         for (int users = 0; users < activeUsers.size(); users++) {
 
             if (users >= 3) {
+
                 double tmp = ((double) activeUsers.size() / 3);
                 if (tmp == 0) {
                     tmp = 1;
@@ -140,6 +145,7 @@ class ActiveUser {
 
             } else if (activeUsers.size() != 0) {
                 NUM_COL++;
+
             }
 
 
@@ -151,7 +157,10 @@ class ActiveUser {
         NUM_ROWS = 1;
         NUM_COL = 0;
         int userCounter = 0;
-        activeUsers.add(name);
+        if (name != null) {
+            activeUsers.add(name);
+        }
+
 //        FindUsers();
 //        PopulateTable();
     }
