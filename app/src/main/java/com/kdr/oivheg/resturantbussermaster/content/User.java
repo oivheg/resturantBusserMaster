@@ -9,8 +9,9 @@ public class User {
     public boolean isNotified;
     public boolean isClicked;
 
-    public User(String name, boolean isNotified) {
+    public User(String name, boolean isNotified, boolean isClicked) {
         Name = name;
         this.isNotified = isNotified;
+        this.isClicked = isClicked;
     }
 }

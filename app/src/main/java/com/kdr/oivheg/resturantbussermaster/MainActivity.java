@@ -188,14 +188,14 @@ public class MainActivity extends AppCompatActivity {
         params.put("mstrKey", MasterKey);
         if (_CancelDinner) {
             wasNotified = false;
-            ChangeButtons(false);
+            ChangeAllButtons(false);
             btnnotifyAll.setText(getString(R.string.btnNotifAll));
             BusserRestClientPost("CancelDinnerForAll?" + params, null);
 
         } else {
             btnnotifyAll.setText(R.string.cancelDinner);
             wasNotified = true;
-            ChangeButtons(true);
+            ChangeAllButtons(true);
 
             BusserRestClientPost("DinnerForAll?" + params, null);
 
@@ -380,46 +380,33 @@ public class MainActivity extends AppCompatActivity {
 
 //        String[] lstbtnInfo = {name, "test2"};
         //  lst_activeUsers.add(lstbtnInfo);
-        User tmpUser = new User(name, false);
+        User tmpUser = new User(name, false, false);
         lst_userisactive.add(tmpUser);
 //        FindUsers();
 //        PopulateTable();
     }
 
-    private void ChangeButtons(final boolean _isBlinking) {
+    private void ChangeAllButtons(final boolean _isBlinking) {
 
 
         final View view = this.findViewById(R.id.activity_main);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
+
 
                     for (User usr : lst_userisactive) {
                         CircleImageView b = view.findViewWithTag(usr.Name.trim());
-//                    b.setText("Melding Motatt");
+                        // usr.isClicked = true;
                         if (_isBlinking) {
-                            CivButtonStartAnimation(b);
-                            usr.isClicked = true;
-                            //String[] button = {user[0], "true"};
 
-                            //lst_activeUsers.set(i, button);
-                            //gridButtonClicked(true, user.Name );
+                            SetButtonStatus(b, b.getTag().toString());
                         } else {
-                            b.clearAnimation();
-                            usr.isClicked = false;
-                            // String[] button = {user[0], "false"};
-                            //lst_activeUsers.set(i, button);
-                            //gridButtonClicked(false, user.Name );
+                            usr.isClicked = true;
+
+                            SetButtonStatus(b, b.getTag().toString());
                         }
 
-                    }
-                } catch (Exception e) {
-                    System.out.println("MAIN: ERROR Could not StopBlink" + e);
-                }
 
-            }
-        });
+                    }
+
 
 
     }
@@ -600,28 +587,43 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Boolean btnClicked;
                 btnClicked = IsButtonAlreadyClicked(button);
+                SetButtonStatus(button, FINAL_USER_NAME);
 
-                //String clickedFlag  = button.getTag(R.string.BtnClicked).toString();
-
-                if (btnClicked) {
-                    ChagenBTNList(button.getTag().toString(), false);
-                    ClearButtonAnimation(button);
-                    //button.setTag(R.string.BtnClicked, false);
-                    button.setPadding(0, 0, 0, 0);
-                    button.setBorderColor(Color.YELLOW);
-                    button.setBorderWidth(2);
-                    //  button.setfoc(false);
-//                            return;
-                } else {
-                    ChagenBTNList(button.getTag().toString(), true);
-                    //button.setTag(R.string.BtnClicked, true);
-
-                }
                 gridButtonClicked(btnClicked, FINAL_USER_NAME);
+
+
             }
         });
         return button;
     }
+
+    private void SetButtonStatus(CircleImageView button, String FINAL_USER_NAME) {
+        Boolean btnClicked;
+        btnClicked = IsButtonAlreadyClicked(button);
+
+        //String clickedFlag  = button.getTag(R.string.BtnClicked).toString();
+
+        if (btnClicked) {
+            ChagenBTNList(button.getTag().toString(), false);
+            ClearButtonAnimation(button);
+            //  ChangeAllButtons(false);
+            //button.setTag(R.string.BtnClicked, false);
+            button.setPadding(0, 0, 0, 0);
+            button.setBorderColor(Color.YELLOW);
+            button.setBorderWidth(2);
+            //  button.setfoc(false);
+//                            return;
+        } else {
+            ChagenBTNList(button.getTag().toString(), true);
+            //button.setTag(R.string.BtnClicked, true);
+            //ChangeAllButtons(true);
+            CivButtonStartAnimation(button);
+
+
+        }
+
+    }
+
 
     private Boolean IsButtonAlreadyClicked(CircleImageView button) {
 //        for (String[] user : lst_activeUsers) {
@@ -658,6 +660,7 @@ public class MainActivity extends AppCompatActivity {
         for (User usr : lst_userisactive) {
             if (usr.Name.trim().equals(buttonName.trim())) {
                 usr.isClicked = value;
+                usr.isNotified = false;
             }
         }
     }
@@ -741,7 +744,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("CancelDinner", params);
             wasNotified = false;
-            FindUser(name);
+            //FindUser(name);
 
         } else {
             //      creates request paramter with user, so that specific user are notified.
@@ -749,9 +752,11 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("DinnerisReady", params);
             wasNotified = true;
-            User User = new User(name, true);
+            User User = new User(name, false, true);
+
             lst_userisactive.add(User);
         }
+
 
     }
 
