@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                         CircleImageView b = view.findViewWithTag(usr.Name.trim());
                         // usr.isClicked = true;
                         if (_isBlinking) {
-
+                            usr.isClicked = false;
                             SetButtonStatus(b, b.getTag().toString());
                         } else {
                             usr.isClicked = true;
@@ -744,6 +744,8 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("CancelDinner", params);
             wasNotified = false;
+            User User = new User(name, false, true);
+            lst_userisactive.remove(User);
             //FindUser(name);
 
         } else {
@@ -754,7 +756,7 @@ public class MainActivity extends AppCompatActivity {
             wasNotified = true;
             User User = new User(name, false, true);
 
-            lst_userisactive.add(User);
+            // lst_userisactive.add(User);
         }
 
 
