@@ -64,7 +64,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 //                        params.put("MasterKey", MasterKey);
                     params.put("AppId", getFCMToken());
                     params.put("Email", final_email);
-
+                    final String[] MasterKey = {""};
                     BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
                         // --Commented out by Inspection (31.01.2018 09.07):String Tmp = "Test ";
 
@@ -72,17 +72,26 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         protected Object parseResponse(byte[] responseBody) throws JSONException {
                             String s = new String(responseBody);
                             s = s.replace("\"", "");
-                            MainActivity.getInstace().setMsterKey(s);
+                            if (!s.equals("")) {
+                                MainActivity.getInstace().setMsterKey(s);
+                            }
 
+                            MasterKey[0] = s;
+
+
+//                            SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+//                            SharedPreferences.Editor edt = pref.edit();
+//                            edt.putBoolean("activity_executed", true);
+//                            edt.commit();
                             return super.parseResponse(responseBody);
 
                         }
 
-
                     });
 
-                    //  MainActivity.getInstace().ActiveUsers();
 
+                    //  MainActivity.getInstace().ActiveUsers();
+                    // MainActivity.getInstace().refreshTable();
                     finish();
 
                 } else {
@@ -131,9 +140,11 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     isCreating = true;
 
                     findViewById(R.id.btnlogin).setVisibility(View.GONE);
-                    findViewById(R.id.lay_eula).setVisibility(View.VISIBLE);
-                    findViewById(R.id.lay_contact).setVisibility(View.VISIBLE);
-                    findViewById(R.id.lay_Name).setVisibility(View.VISIBLE);
+                    findViewById(R.id.L_1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.L_2).setVisibility(View.VISIBLE);
+                    findViewById(R.id.L_3).setVisibility(View.VISIBLE);
+                    //findViewById(R.id.lay_contact).setVisibility(View.VISIBLE);
+                    //findViewById(R.id.lay_Name).setVisibility(View.VISIBLE);
                 }
 
 
@@ -162,7 +173,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
                             prefs.edit().putString("MasterKey", MasterKey).apply();
 
-                            MainActivity.getInstace().setMsterKey(MasterKey);
+                            //  MainActivity.getInstace().setMsterKey(MasterKey);
                             CreateMaster(EMail);
 
                         }
@@ -206,6 +217,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
             }
 
         });
+        MainActivity.getInstace().setMsterKey(MasterKey);
     }
 
     private void signIn(String email, String password) {

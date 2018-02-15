@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     // String depactiveUsers[] = {"øivind", "Espen", "Linda", "kåre"};
     private final ArrayList<User> tmp_userisactive = new ArrayList<>();
     private final ArrayList<User> lst_userisactive = new ArrayList<>();
+    public boolean isloggedin = false;
     TextView msg;
     CircleImageView GeneralUserButton;
     int _ButtonShape = R.drawable.btn_ripple;
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     // --Commented out by Inspection (31.01.2018 09.07):List<String> btnstateList = new ArrayList<String>();
     private ProgressDialog progressDialog;
     private String MasterKey;
-
     private final View.OnClickListener refreshListener = new View.OnClickListener() {
         public void onClick(View v) {
             ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
-
 
     public static MainActivity getInstace() {
         return ins;
@@ -163,10 +162,8 @@ public class MainActivity extends AppCompatActivity {
 //        ActiveUsers();
         btnrefresh.setOnClickListener(refreshListener);
         btnnotifyAll.setOnClickListener(notifyAllListener);
-        if (HasNetwork()) {
-            refreshTable();
-        }
 
+            refreshTable();
 
 
     }
@@ -308,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     public void ActiveUsers() {
         tmp_userisactive.clear();
@@ -791,10 +789,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // this is going to be removed, as everything will be handled my appID and response will come from api
-        prefs = getSharedPreferences("com.kdr.oivhe.resturantbusser", MODE_PRIVATE);
-        MasterKey = prefs.getString("MasterKey", null);
-        MainActivity.getInstace().setMsterKey(MasterKey);
+        refreshTable();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    msg.setText(MasterKey);
+                } catch (Exception e) {
+                    System.out.println("MAIN: ERROR Set Text MasterKey  " + e);
+                }
+
+            }
+        });
 
 
     }

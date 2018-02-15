@@ -21,17 +21,23 @@
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <!--<activity android:name=".CreateMasterUser"></activity>-->
         <activity
             android:name=".fcm.FCMLogin"
             android:label="@string/title_activity_fcmlogin"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan">
 
+
+        </activity>
+        <activity android:name=".SplashActivity">
+
+
+        </activity>
         <service
             android:name=".fcm.FCMMessageService"
             android:exported="false"
