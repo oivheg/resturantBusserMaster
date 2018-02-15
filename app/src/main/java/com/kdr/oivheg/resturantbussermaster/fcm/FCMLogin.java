@@ -30,6 +30,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "FCMLogin";
+    String final_email = "";
     // --Commented out by Inspection (31.01.2018 09.07):TextView infoip, // --Commented out by Inspection (31.01.2018 09.07):msg;
     private String MasterKey;
     private String ResttName;
@@ -62,6 +63,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                     RequestParams params = new RequestParams();
 //                        params.put("MasterKey", MasterKey);
                     params.put("AppId", getFCMToken());
+                    params.put("Email", final_email);
 
                     BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
                         // --Commented out by Inspection (31.01.2018 09.07):String Tmp = "Test ";
@@ -71,13 +73,15 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                             String s = new String(responseBody);
                             s = s.replace("\"", "");
                             MainActivity.getInstace().setMsterKey(s);
+
                             return super.parseResponse(responseBody);
+
                         }
 
 
                     });
 
-                    MainActivity.getInstace().ActiveUsers();
+                    //  MainActivity.getInstace().ActiveUsers();
 
                     finish();
 
@@ -204,9 +208,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         });
     }
 
-
     private void signIn(String email, String password) {
-        final String final_email = email;
+        final_email = email;
         mAuth.signInWithEmailAndPassword(email, password)
 
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -215,20 +218,20 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
 
-                        RequestParams params = new RequestParams();
-                        params.put("Email", final_email);
-                        params.put("AppId", getFCMToken());
-                        BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
-                            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
-                                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                                // Handle resulting parsed JSON response here
-
-                                System.out.println("Active usccesessfull push to server    :" +
-
-                                        success);
-                            }
-
-                        });
+//                        RequestParams params = new RequestParams();
+//                        params.put("Email", final_email);
+//                        params.put("AppId", getFCMToken());
+//                        BusserRestClient.post("MasterAppId", params, new JsonHttpResponseHandler() {
+//                            public void onSuccess(int statusCode, Header headers[], JSONObject success) {
+//                                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+//                                // Handle resulting parsed JSON response here
+//
+//                                System.out.println("Active usccesessfull push to server    :" +
+//
+//                                        success);
+//                            }
+//
+//                        });
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.

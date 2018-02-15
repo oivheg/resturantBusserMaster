@@ -126,7 +126,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (!HasNetwork()) {
+            ProgressBar("No Network", "Lukk appen, sjekk nettverk og prøv igjen", false);
 
+
+        } else {
+            ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
+
+        }
         super.onCreate(savedInstanceState);
         ins = this;
         IntentFilter intentFilter = new IntentFilter();
@@ -141,13 +148,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        if (!HasNetwork()) {
-            ProgressBar("No Network", "Lukk appen, sjekk nettverk og prøv igjen", false);
 
-
-        } else {
-            ProgressBar("Laster", "Leter etter brukere, vennligst vent", false);
-        }
 
         Button btnrefresh = (Button) findViewById(R.id.btnrefresh);
         btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
@@ -162,9 +163,10 @@ public class MainActivity extends AppCompatActivity {
 //        ActiveUsers();
         btnrefresh.setOnClickListener(refreshListener);
         btnnotifyAll.setOnClickListener(notifyAllListener);
+        if (HasNetwork()) {
+            refreshTable();
+        }
 
-
-        //refreshTable();
 
 
     }
