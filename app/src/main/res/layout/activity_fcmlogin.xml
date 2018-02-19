@@ -18,6 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
 
@@ -31,7 +32,7 @@
 
                 <EditText
                     android:id="@+id/field_rstname"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
@@ -42,7 +43,7 @@
 
                 <EditText
                     android:id="@+id/field_contact"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
@@ -63,7 +64,7 @@
 
                 <EditText
                     android:id="@+id/field_phone"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
@@ -74,7 +75,7 @@
 
                 <EditText
                     android:id="@+id/field_OrgNr"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
@@ -85,45 +86,11 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/L_3"
-                android:layout_width="match_parent"
-
-                android:layout_height="wrap_content"
-                android:layout_weight="2.58"
-                android:orientation="horizontal"
-                android:visibility="invisible">
-
-                <EditText
-                    android:id="@+id/field_EULA"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="@string/approve_eula"
-                    android:imeOptions="actionNext"
-                    android:inputType="textPersonName"
-                    android:nextFocusRight="@+id/field_MISC" />
-
-                <EditText
-                    android:id="@+id/field_MISC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:hint="@string/other_info"
-                    android:imeOptions="actionNext"
-                    android:inputType="textPersonName"
-                    android:nextFocusDown="@+id/field_email" />
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/email_password_fields"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2.58"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/field_email"
@@ -142,22 +109,62 @@
                     android:layout_weight="1"
                     android:hint="@string/password"
                     android:inputType="textPassword" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/L_3"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:paddingTop="20dp"
+                android:visibility="invisible">
+
+                <TextView
+                    android:id="@+id/txt_Eula"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/approve_eula" />
+
+                <CheckBox
+                    android:id="@+id/CheckBox_Eula"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:text="I Agree to the EULA" />
+
+                <!--<EditText-->
+                <!--android:id="@+id/field_MISC"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:ems="10"-->
+                <!--android:hint="@string/other_info"-->
+                <!--android:imeOptions="actionNext"-->
+                <!--android:inputType="textPersonName"-->
+                <!--android:nextFocusDown="@+id/field_email" />-->
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/L_Buttons"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/email_password_fields"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:paddingTop="50dp">
 
                 <Button
 
                     android:id="@+id/btnlogin"
-                    android:layout_width="0dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
                     android:layout_weight="1"
                     android:background="@color/kdrYellow"
                     android:onClick="onClick"
@@ -165,7 +172,7 @@
 
                 <Button
                     android:id="@+id/btncreateac"
-                    android:layout_width="0dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@color/kdrYellow"

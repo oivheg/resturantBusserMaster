@@ -4,9 +4,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +38,7 @@ import cz.msebera.android.httpclient.Header;
 public class FCMLogin extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "FCMLogin";
     String final_email = "";
+    Button CreateButton;
     // --Commented out by Inspection (31.01.2018 09.07):TextView infoip, // --Commented out by Inspection (31.01.2018 09.07):msg;
     private String MasterKey;
     private String ResttName;
@@ -109,6 +117,30 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
+        CreateButton = (Button) findViewById(R.id.btncreateac);
+
+        CheckBox checkBox = (CheckBox) findViewById(R.id.CheckBox_Eula);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // update your model (or other business logic) based on isChecked
+                if (isChecked) {
+                    CreateButton.setEnabled(true);
+                } else {
+                    CreateButton.setEnabled(false);
+                }
+
+            }
+        });
+
+        TextView HyperLink = (TextView) findViewById(R.id.txt_Eula);
+
+        Spanned Text = Html.fromHtml("Click This Link to Read EULA <br />" +
+                "<a href='http://nbdata.no/'>NBdata EULA</a>");
+
+        HyperLink.setMovementMethod(LinkMovementMethod.getInstance());
+        HyperLink.setText(Text);
     }
 
     private String getFCMToken() {
@@ -120,11 +152,13 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         return tkn;
     }
 
+
     @Override
     public void onClick(View v) {
         EditText email = (EditText) findViewById(R.id.field_email);
         EditText pwd = (EditText) findViewById(R.id.field_password);
         EditText rstname = (EditText) findViewById(R.id.field_rstname);
+
         EMail = email.getText().toString();
         switch (v.getId()) {
             case R.id.btnlogin:
@@ -133,11 +167,15 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                 break;
             case R.id.btncreateac:
                 if (isCreating) {
+
                     createAccount(email.getText().toString(), pwd.getText().toString());
                     ResttName = rstname.getText().toString();
                     isCreating = false;
+
+
                 } else {
                     isCreating = true;
+                    CreateButton.setEnabled(false);
 
                     findViewById(R.id.btnlogin).setVisibility(View.GONE);
                     findViewById(R.id.L_1).setVisibility(View.VISIBLE);
