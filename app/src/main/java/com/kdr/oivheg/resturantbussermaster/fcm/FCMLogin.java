@@ -155,8 +155,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     }
 
     private boolean validate(EditText[] fields) {
-        for (int i = 0; i < fields.length; i++) {
-            EditText currentField = fields[i];
+        for (EditText currentField : fields) {
             if (TextUtils.isEmpty(currentField.getText())) {
                 return false;
             }
@@ -173,7 +172,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         EditText field_Phone = (EditText) findViewById(R.id.field_phone);
         EditText Org_Nubmer = (EditText) findViewById(R.id.field_OrgNr);
 
-        boolean fieldsOK = false;
+        boolean fieldsOK;
         EMail = email.getText().toString();
         switch (v.getId()) {
             case R.id.btnlogin:

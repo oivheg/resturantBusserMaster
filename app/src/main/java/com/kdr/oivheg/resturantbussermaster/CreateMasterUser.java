@@ -16,9 +16,9 @@ import java.sql.Statement;
 
 public abstract class CreateMasterUser extends AppCompatActivity {
     // --Commented out by Inspection (31.01.2018 09.07):String un, // --Commented out by Inspection (31.01.2018 09.07):pass, // --Commented out by Inspection (31.01.2018 09.07):db, // --Commented out by Inspection (31.01.2018 09.07):ip;
-    private static TextView phone;
-    private static TextView contact;
-    private static ProgressBar progressBar;
+    private TextView phone;
+    private TextView contact;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +94,8 @@ public abstract class CreateMasterUser extends AppCompatActivity {
                     DBHelper connectDb = new DBHelper();
                     Connection con = connectDb.connectionclass();
                     System.out.println("I am Connected");
-                    if (con == null) {
-//Connection are null
-                    } else {
+                    if (con != null) {
+
 
                         // Continue here, trying to show al info from the USERS Table .
                         String query = "select * from Users";

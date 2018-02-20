@@ -433,8 +433,6 @@ public class MainActivity extends AppCompatActivity {
                         b.clearAnimation();
                         b.setBorderWidth(60);
                         b.setBorderColor(Color.GREEN);
-                    } else {
-//to prevent code fom runing udner certan conditions
                     }
 
                 } catch (Exception e) {
@@ -474,9 +472,8 @@ public class MainActivity extends AppCompatActivity {
 //tableRow.setPadding(10,10,10,10);
 
 
-            if (NUM_COL == 0) {
+            if (NUM_COL != 0) {
 
-            } else {
                 table.addView(tableRow);
             }
 //            Iterator<User> user = lst_userisactive.iterator();
@@ -672,8 +669,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void RestoreUsers() {
-        boolean UserisNotified = false;
-        boolean BtnIsClicked = false;
+        boolean UserisNotified;
+        boolean BtnIsClicked;
         for (final User user : lst_userisactive) {
 
             for (User _tmpUser : tmp_userisactive) {
