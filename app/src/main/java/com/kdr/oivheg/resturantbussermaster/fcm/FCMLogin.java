@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -141,6 +142,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
         HyperLink.setMovementMethod(LinkMovementMethod.getInstance());
         HyperLink.setText(Text);
+        isCreating = false;
     }
 
     private String getFCMToken() {
@@ -152,26 +154,44 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         return tkn;
     }
 
+    private boolean validate(EditText[] fields) {
+        for (int i = 0; i < fields.length; i++) {
+            EditText currentField = fields[i];
+            if (TextUtils.isEmpty(currentField.getText())) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public void onClick(View v) {
         EditText email = (EditText) findViewById(R.id.field_email);
         EditText pwd = (EditText) findViewById(R.id.field_password);
         EditText rstname = (EditText) findViewById(R.id.field_rstname);
+        EditText field_contact = (EditText) findViewById(R.id.field_contact);
+        EditText field_Phone = (EditText) findViewById(R.id.field_phone);
+        EditText Org_Nubmer = (EditText) findViewById(R.id.field_OrgNr);
 
+        boolean fieldsOK = false;
         EMail = email.getText().toString();
         switch (v.getId()) {
             case R.id.btnlogin:
+                fieldsOK = validate(new EditText[]{email, pwd});
+                if (!fieldsOK) {
+                    return;
+                }
                 signIn(EMail, pwd.getText().toString());
 
                 break;
             case R.id.btncreateac:
+                fieldsOK = validate(new EditText[]{email, pwd, rstname, field_contact, field_Phone, Org_Nubmer});
                 if (isCreating) {
-
+                    if (!fieldsOK) {
+                        return;
+                    }
                     createAccount(email.getText().toString(), pwd.getText().toString());
                     ResttName = rstname.getText().toString();
-                    isCreating = false;
-
 
                 } else {
                     isCreating = true;
