@@ -12,9 +12,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
         Button btnrefresh = (Button) findViewById(R.id.btnrefresh);
@@ -520,6 +522,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = new TextView(this);
 
         tv.setText(FINAL_USER_NAME); // this adds the USername to the textfield under image
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
         tv.setGravity(Gravity.CENTER);
         // tv.setLayoutParams(tblParams);
         LL.setOrientation(LinearLayout.VERTICAL);

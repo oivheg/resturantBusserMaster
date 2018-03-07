@@ -39,7 +39,8 @@
                     android:hint="@string/resturant_name"
                     android:imeOptions="actionNext"
                     android:inputType="textPersonName"
-                    android:nextFocusRight="@+id/field_contact" />
+                    android:nextFocusRight="@+id/field_contact"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <EditText
                     android:id="@+id/field_contact"
@@ -50,7 +51,8 @@
                     android:hint="@string/contact_person"
                     android:imeOptions="actionNext"
                     android:inputType="textPersonName"
-                    android:nextFocusDown="@+id/field_phone" />
+                    android:nextFocusDown="@+id/field_phone"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </LinearLayout>
 
             <LinearLayout
@@ -72,7 +74,8 @@
                     android:imeOptions="actionNext"
                     android:inputType="numberSigned"
                     android:maxLength="8"
-                    android:nextFocusRight="@+id/field_OrgNr" />
+                    android:nextFocusRight="@+id/field_OrgNr"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <EditText
                     android:id="@+id/field_OrgNr"
@@ -84,7 +87,8 @@
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:maxLength="9"
-                    android:nextFocusDown="@+id/field_EULA" />
+                    android:nextFocusDown="@+id/field_EULA"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
             </LinearLayout>
 
             <LinearLayout
@@ -102,7 +106,8 @@
                     android:hint="@string/epost"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
-                    android:nextFocusRight="@+id/field_password" />
+                    android:nextFocusRight="@+id/field_password"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <EditText
                     android:id="@+id/field_password"
@@ -110,7 +115,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 
             </LinearLayout>
@@ -123,14 +129,16 @@
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:paddingTop="20dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/txt_Eula"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/approve_eula" />
+                    android:text="@string/approve_eula"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <CheckBox
                     android:id="@+id/CheckBox_Eula"
@@ -168,18 +176,31 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
-                    android:background="@color/kdrYellow"
+                    android:background="@drawable/rounded_button_settings"
                     android:onClick="onClick"
-                    android:text="@string/logg_inn" />
+                    android:text="@string/logg_inn"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <Button
                     android:id="@+id/btncreateac"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="15dp"
                     android:layout_weight="1"
-                    android:background="@color/kdrYellow"
+                    android:background="@drawable/rounded_button_settings"
                     android:onClick="onClick"
-                    android:text="@string/lage_konto" />
+                    android:text="@string/lage_konto"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <Button
+                    android:id="@+id/btnforgot"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_button_settings"
+                    android:onClick="onClick"
+                    android:text="Glemt Passord"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             </LinearLayout>
 

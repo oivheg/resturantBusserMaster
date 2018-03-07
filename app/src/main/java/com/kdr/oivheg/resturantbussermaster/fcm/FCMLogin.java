@@ -3,6 +3,7 @@ package com.kdr.oivheg.resturantbussermaster.fcm;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spanned;
@@ -40,6 +41,7 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
     private static final String TAG = "FCMLogin";
     String final_email = "";
     Button CreateButton;
+    EditText email, pwd, rstname, field_contact, field_Phone, Org_Nubmer;
     // --Commented out by Inspection (31.01.2018 09.07):TextView infoip, // --Commented out by Inspection (31.01.2018 09.07):msg;
     private String MasterKey;
     private String ResttName;
@@ -145,6 +147,19 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         isCreating = false;
     }
 
+    @Override
+    public void onBackPressed() {
+        // super.onBackPressed(); commented this line in order to disable back press
+        //Write your code here
+        CreateButton.setEnabled(true);
+        isCreating = false;
+        findViewById(R.id.btnlogin).setVisibility(View.VISIBLE);
+        findViewById(R.id.L_1).setVisibility(View.GONE);
+        findViewById(R.id.L_2).setVisibility(View.GONE);
+        findViewById(R.id.L_3).setVisibility(View.GONE);
+        Toast.makeText(getApplicationContext(), "Back press disabled!", Toast.LENGTH_SHORT).show();
+    }
+
     private String getFCMToken() {
 
         String tkn = FirebaseInstanceId.getInstance().getToken();
@@ -165,15 +180,15 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        EditText email = (EditText) findViewById(R.id.field_email);
-        EditText pwd = (EditText) findViewById(R.id.field_password);
-        EditText rstname = (EditText) findViewById(R.id.field_rstname);
-        EditText field_contact = (EditText) findViewById(R.id.field_contact);
-        EditText field_Phone = (EditText) findViewById(R.id.field_phone);
-        EditText Org_Nubmer = (EditText) findViewById(R.id.field_OrgNr);
+        email = (EditText) findViewById(R.id.field_email);
+        pwd = (EditText) findViewById(R.id.field_password);
+        rstname = (EditText) findViewById(R.id.field_rstname);
+        field_contact = (EditText) findViewById(R.id.field_contact);
+        field_Phone = (EditText) findViewById(R.id.field_phone);
+        Org_Nubmer = (EditText) findViewById(R.id.field_OrgNr);
 
         boolean fieldsOK;
-        EMail = email.getText().toString();
+        EMail = email.getText().toString().trim();
         switch (v.getId()) {
             case R.id.btnlogin:
                 fieldsOK = validate(new EditText[]{email, pwd});
@@ -187,9 +202,10 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                 fieldsOK = validate(new EditText[]{email, pwd, rstname, field_contact, field_Phone, Org_Nubmer});
                 if (isCreating) {
                     if (!fieldsOK) {
+                        ShowDialog("Some fields are missing");
                         return;
                     }
-                    createAccount(email.getText().toString(), pwd.getText().toString());
+                    createAccount(EMail, pwd.getText().toString());
                     ResttName = rstname.getText().toString();
 
                 } else {
@@ -206,9 +222,24 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
 
 
                 break;
+            case R.id.btnforgot:
+                if (!validate(new EditText[]{email})) {
+                    ShowDialog("Skriv inn epost");
+                    return;
+                }
+                mAuth.sendPasswordResetEmail(EMail);
+                ShowDialog("Du får nå en mail med instrukser for resetting av passord ");
+                break;
             default:
         }
 
+    }
+
+    private void ShowDialog(String info) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setMessage(info);
+        alertDialog.show();
     }
 
     private void createAccount(String email, String passwd) {
@@ -223,6 +254,8 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
+
+                            ShowDialog("Login error:  Email already in use");
 //                            Toast.makeText(FCMLogin.this, "Login error",
 //                                    Toast.LENGTH_SHORT).show();
                         } else {
@@ -251,10 +284,9 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
         params.put("MasterKey", MasterKey);
         params.put("AppId", getFCMToken());
         params.put("Email", email);
-        // ----------- Fake data as of now -------------//
-        params.put("Contact", "øivind S Heggland");
-        params.put("OrgNr", "no org");
-        params.put("Phone", 92627034);
+        params.put("Contact", field_contact.getText());
+        params.put("OrgNr", Org_Nubmer.getText());
+        params.put("Phone", field_Phone.getText());
 
 
         BusserPost(params);
@@ -305,9 +337,10 @@ public class FCMLogin extends AppCompatActivity implements View.OnClickListener 
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(FCMLogin.this, "Login error",
-                                    Toast.LENGTH_SHORT).show();
+//                            Log.w(TAG, "signInWithEmail:failed", task.getException());
+//                            Toast.makeText(FCMLogin.this, "Login error",
+//                                    Toast.LENGTH_SHORT).show();
+                            ShowDialog("Login error:  Email Not Found");
                         }
 
                         // ...
