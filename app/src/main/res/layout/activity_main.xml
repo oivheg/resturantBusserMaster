@@ -21,10 +21,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.11"
-            android:background="@color/cast_intro_overlay_button_background_color"
+            android:background="@drawable/rounded_button_refresh"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="20dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/infoip"
@@ -41,6 +40,8 @@
                 android:id="@+id/msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:layout_weight="1"
                 android:text="@string/message"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
@@ -62,6 +63,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.11"
             android:background="@drawable/rounded_button_refresh"
+            android:paddingLeft="20dp"
             android:text="@string/refresh"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
