@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="@string/jeg_godtar_elua_avatlen_ved_trykke_p_registrer_knappen" />
+        android:text="@string/Approve_EULA" />
 
     <EditText
         android:id="@+id/txtcontact"

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KDRS Master</string>
+    <string name="app_name">Staff Busser Master</string>
     <string name="title_activity_fcmlogin">FCMLogin</string>
     <string name="btnNotifAll">Call All Users</string>
     <string name="BtnClicked" />
@@ -21,7 +21,7 @@
     <string name="message">Message</string>
     <string name="refresh">Refresh</string>
     <string name="org">Org</string>
-    <string name="jeg_godtar_elua_avatlen_ved_trykke_p_registrer_knappen">Jeg godtar elua avatlen ved å trykke på REGISTRER knappen</string>
+    <string name="Approve_EULA">Jeg godtar elua avatlen ved å trykke på REGISTRER knappen</string>
     <string name="contact">contact</string>
     <string name="registrer">Registrer</string>
     <string name="cancelDinner">CancelDinner</string>

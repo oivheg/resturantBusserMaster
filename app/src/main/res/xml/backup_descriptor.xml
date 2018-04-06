@@ -4,5 +4,5 @@
     <!-- Exclude the shared preferences file that contains the GCM registrationId -->
     <exclude
         domain="sharedpref"
-        path="com.kdr.oivhe.resturantbusser.xml" />
+        path="com.NBD.oivhe.resturantbusser.xml" />
 </full-backup-content>
