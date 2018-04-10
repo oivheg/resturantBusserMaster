@@ -151,11 +151,11 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
-        Button btnrefresh = (Button) findViewById(R.id.btnrefresh);
-        btnnotifyAll = (Button) findViewById(R.id.btnnotifyAll);
+        Button btnrefresh = findViewById(R.id.btnrefresh);
+        btnnotifyAll = findViewById(R.id.btnnotifyAll);
 
-        TextView infoip = (TextView) findViewById(R.id.infoip);
-        msg = (TextView) findViewById(R.id.msg);
+        TextView infoip = findViewById(R.id.infoip);
+        msg = findViewById(R.id.msg);
 
 //        server = new Server(this);
 //        infoip.setText(server.getIpAddress() + ":" + server.getPort());
@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity {
     // Populates the table with the buttons for each user.
     private void PopulateTable() {
 
-        TableLayout table = (TableLayout) findViewById(R.id.tableForClients);
+        TableLayout table = findViewById(R.id.tableForClients);
         //  table.setPadding(0,10,0,0);
         table.removeAllViews();
 
@@ -521,12 +521,14 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv = new TextView(this);
 
+        tv.setBackgroundColor(Color.RED);
+
         tv.setText(FINAL_USER_NAME); // this adds the USername to the textfield under image
         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
-        tv.setGravity(Gravity.CENTER);
+        tv.setGravity(Gravity.RIGHT);
         // tv.setLayoutParams(tblParams);
         LL.setOrientation(LinearLayout.VERTICAL);
-        // LL.setBackgroundColor(Color.BLUE);
+        //LL.setBackgroundColor(Color.BLUE);
 
 
 //                attributLayoutParams.gravity = Gravity.CENTER;
