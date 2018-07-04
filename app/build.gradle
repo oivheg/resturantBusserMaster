@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.NBD.NbData.StaffBusserMaster"
         minSdkVersion 22
         targetSdkVersion 27
-        versionCode 9
-        versionName "1.9"
+        versionCode 1
+        versionName "Release"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

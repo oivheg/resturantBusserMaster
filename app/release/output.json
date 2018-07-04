@@ -6,13 +6,14 @@
     "apkInfo": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 9
+      "versionCode": 1,
+      "versionName": "Release",
+      "enabled": true,
+      "outputFile": "app-release.apk",
+      "fullName": "release",
+      "baseName": "release"
     },
     "path": "app-release.apk",
-    "properties": {
-      "packageId": "com.kdr.oivheg.resturantbussermaster",
-      "split": "",
-      "minSdkVersion": "22"
-    }
+    "properties": {}
   }
 ]

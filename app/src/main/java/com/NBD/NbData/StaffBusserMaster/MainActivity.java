@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    CircleImageView b = view.findViewWithTag(user.trim());
+                    CircleImageView b = view.findViewWithTag(user.trim().toLowerCase());
 
                     Object clickedFlag = b.getTag(R.string.BtnClicked);
                     Boolean wasCLicked = IsButtonAlreadyClicked(b);
@@ -521,11 +521,11 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv = new TextView(this);
 
-        tv.setBackgroundColor(Color.RED);
+        // tv.setBackgroundColor(Color.RED);
 
         tv.setText(FINAL_USER_NAME); // this adds the USername to the textfield under image
         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 40);
-        tv.setGravity(Gravity.RIGHT);
+        tv.setGravity(Gravity.CENTER);
         // tv.setLayoutParams(tblParams);
         LL.setOrientation(LinearLayout.VERTICAL);
         //LL.setBackgroundColor(Color.BLUE);
@@ -568,9 +568,16 @@ public class MainActivity extends AppCompatActivity {
         button.setLayoutParams(tblParams);
         // tableRow.setOrientation(LinearLayout.VERTICAL);
 
+        //---Gets the users profile image.
+        // final String imgURL  = "https://firebasestorage.googleapis.com/v0/b/staff-busser.appspot.com/o/Jens%2Fprofile.jpg?alt=media&token=e4ec989e-3ea9-4851-b4fd-09e057870988";
+        // new DownLoadImageTask(button).execute(imgURL);
+
+
         //button.setScaleType(CircularImageView.ScaleType.CENTER_INSIDE);
 //                button.setLayoutParams(tblParams);
         int _backgorundimage = R.drawable.waiter_no;
+
+
         button.setImageResource(_backgorundimage);
         // button.setBackgroundColor(Color.RED);
         button.setBorderWidth(3);
@@ -580,7 +587,7 @@ public class MainActivity extends AppCompatActivity {
         button.setPadding(10, 0, 0, 0);
         //button.setBackgroundResource(_backgorundimage);
         //button.setText(FINAL_USER_NAME + " " + row + " " + col);
-        button.setTag(FINAL_USER_NAME.trim());
+        button.setTag(FINAL_USER_NAME.trim().toLowerCase());
         button.setFocusableInTouchMode(false);
         // button.setTag(R.string.BtnClicked,"true");
         //button.setDefaultFocusHighlightEnabled(false);
@@ -628,18 +635,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Boolean IsButtonAlreadyClicked(CircleImageView button) {
-//        for (String[] user : lst_activeUsers) {
-//            String btnnameTag = button.getTag().toString().trim();
-//            String LstbtnNameTag = user[0].trim();
-//            String LstbtnState = user[1].trim();
-//            if (btnnameTag.equals(LstbtnNameTag) && LstbtnState.equals("true")) {
-//                return true;
-//            }
-//        }
+//
 
         for (User usr : lst_userisactive) {
             String btnName = button.getTag().toString().trim();
-            if (usr.Name.trim().equals(btnName)) {
+            String _usr = usr.Name.trim().toLowerCase();
+            if (_usr.equals(btnName)) {
                 return usr.isClicked;
             }
         }
@@ -647,20 +648,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ChagenBTNList(String buttonName, boolean value) {
-        int lst_counter = 0;
-//        for (String[] user : lst_activeUsers) {
-//            String btnnameTag = button.getTag().toString().trim();
-//            String LstUserTag = user[0].trim();
-//
-//            if (btnnameTag.equals(LstUserTag)) {
-//                String[] btnInfo = {button.getTag().toString(), value};
-//                lst_activeUsers.set(lst_counter, btnInfo);
-//            }
-//            lst_counter++;
-//        }
 
         for (User usr : lst_userisactive) {
-            if (usr.Name.trim().equals(buttonName.trim())) {
+            if (usr.Name.trim().toLowerCase().equals(buttonName.trim())) {
                 usr.isClicked = value;
                 usr.isNotified = false;
             }
@@ -746,7 +736,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("CancelDinner", params);
             wasNotified = false;
-            User User = new User(name, false, true);
+            User User = new User(name.toLowerCase(), false, true);
             lst_userisactive.remove(User);
             //FindUser(name);
 
@@ -756,7 +746,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("UserName", name.trim());
             BusserRestClientPost("DinnerisReady", params);
             wasNotified = true;
-            User User = new User(name, false, true);
+            User User = new User(name.toLowerCase(), false, true);
 
             // lst_userisactive.add(User);
         }
